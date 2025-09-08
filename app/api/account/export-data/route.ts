@@ -32,8 +32,8 @@ export async function GET(req: NextRequest) {
     })
     
     // Get user preferences
-    const preferences = await prisma.userPreferences.findFirst({
-      where: { userEmail: DEMO_USER_EMAIL }
+    const preferences = await prisma.userPreference.findFirst({
+      where: { userId: user.id }
     })
     
     const exportData = {
