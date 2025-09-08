@@ -8,9 +8,14 @@ import { generateToken } from '@/lib/auth'
 async function getLocationFromIP(ip: string): Promise<string> {
   try {
     // Using free ipapi.co service for geolocation
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+    
     const response = await fetch(`https://ipapi.co/${ip}/json/`, {
-      timeout: 5000 // 5 second timeout
+      signal: controller.signal
     })
+    
+    clearTimeout(timeoutId)
     
     if (response.ok) {
       const data = await response.json()
@@ -22,8 +27,12 @@ async function getLocationFromIP(ip: string): Promise<string> {
     }
     
     return 'Unknown Location'
-  } catch (error) {
-    console.error('Error fetching location from IP:', error)
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.log('⏰ IP geolocation timed out')
+    } else {
+      console.error('Error fetching location from IP:', error)
+    }
     return 'Unknown Location'
   }
 }
