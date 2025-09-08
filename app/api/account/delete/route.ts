@@ -39,8 +39,8 @@ export async function DELETE(req: NextRequest) {
     })
     
     // 4. Delete user preferences
-    await prisma.userPreferences.deleteMany({
-      where: { userEmail: DEMO_USER_EMAIL }
+    await prisma.userPreference.deleteMany({
+      where: { userId: user.id }
     })
     
     // 5. Finally delete the user
