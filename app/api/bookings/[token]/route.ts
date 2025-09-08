@@ -107,7 +107,7 @@ export async function PUT(
     }
     
     // Determine new invitees (people who weren't previously invited)
-    const previousInvitees = []
+    const previousInvitees: string[] = []
     if (existingBooking.recipientEmail) {
       previousInvitees.push(existingBooking.recipientEmail)
     }
@@ -154,10 +154,10 @@ export async function PUT(
                 updatedBooking.duration.toString(),
                 updatedBooking.meetingType,
                 {
-                  videoLink: updatedBooking.meetingLink,
-                  phoneNumber: updatedBooking.phoneNumber,
-                  address: updatedBooking.address,
-                  notes: updatedBooking.meetingNotes
+                  videoLink: updatedBooking.meetingLink || undefined,
+                  phoneNumber: updatedBooking.phoneNumber || undefined,
+                  address: updatedBooking.address || undefined,
+                  notes: updatedBooking.meetingNotes || undefined
                 }
               )
             }
