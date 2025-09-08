@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     
     // Decode state
     const stateData = JSON.parse(Buffer.from(state, 'base64').toString())
-    const { token, email, name, provider } = stateData
+    const { token, email, name, provider, type } = stateData
     
     // Exchange code for tokens
     const tokens = await getMicrosoftTokens(code)
@@ -127,8 +127,6 @@ export async function GET(req: NextRequest) {
     }
     
     // Handle different OAuth flows
-    const { type } = stateData
-    
     if (type === 'account_management') {
       // Account management - redirect back to account page
       const redirectPath = stateData.redirect || '/account'

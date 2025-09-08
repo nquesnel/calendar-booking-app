@@ -305,7 +305,6 @@ export async function GET(req: NextRequest) {
     const rawIP = req.headers.get('x-forwarded-for') || 
                  req.headers.get('x-real-ip') || 
                  req.headers.get('cf-connecting-ip') || // Cloudflare
-                 req.ip || 
                  'unknown'
     
     // Clean up IP (remove port, get first IP if multiple)
