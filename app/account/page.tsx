@@ -35,6 +35,7 @@ interface UserProfile {
   createdAt: string
   firstName?: string
   lastName?: string
+  username?: string
 }
 
 interface CalendarConnection {
