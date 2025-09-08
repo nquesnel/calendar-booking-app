@@ -107,6 +107,10 @@ export const TIER_FEATURES: Record<PlanTier, TierFeatures> = {
     coachingPackages: true,
     paymentCollection: true,
     intakeForms: true,
+    automatedFollowUps: true,
+    maxFollowUps: 5, // Coaching tier gets more follow-ups
+    customFollowUpTemplates: true,
+    followUpAnalytics: true,
   },
   super_admin: {
     monthlyMeetings: null,
@@ -179,7 +183,8 @@ export function getUpgradeMessage(currentPlan: PlanTier, feature: string): strin
     free: `Upgrade to Professional ($${TIER_PRICING.professional}/month) to unlock ${feature}`,
     professional: `Upgrade to Business ($${TIER_PRICING.business}/month) to unlock ${feature}`,
     business: `Upgrade to Coaching ($${TIER_PRICING.coaching}/month) to unlock ${feature}`,
-    coaching: 'You have access to all features!'
+    coaching: 'You have access to all features!',
+    super_admin: 'You have access to all features!'
   }
   
   return messages[currentPlan] || 'Upgrade your plan to unlock this feature'

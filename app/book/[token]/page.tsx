@@ -24,6 +24,10 @@ interface Booking {
   meetingNotes?: string
   isGroupMeeting: boolean
   maxParticipants: number
+  participantDeadline?: string
+  autoSelectAtDeadline?: boolean
+  allParticipantsConnected?: boolean
+  readyForSelection?: string
 }
 
 interface TimeSuggestion {

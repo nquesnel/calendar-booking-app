@@ -120,7 +120,36 @@ export async function GET(
     
     const participantCalendarData: Record<string, any[]> = {}
     
+    // Declare variables in outer scope for group meetings
+    let connectedParticipants: any[] = []
+    let allParticipantEmails: string[] = []
+    
     if (booking.isGroupMeeting) {
+      // Get all participant emails (defined earlier in first group meeting block)
+      allParticipantEmails = [
+        booking.creatorEmail,
+        booking.recipientEmail,
+        ...((booking as any).participants?.map((p: any) => p.email) || [])
+      ].filter(Boolean) as string[]
+      
+      // Get connected participants  
+      const participantCalendarStatus = await Promise.all(
+        allParticipantEmails.map(async (email) => {
+          const tokens = await prisma.calendarToken.findMany({
+            where: { email }
+          })
+          
+          return {
+            email,
+            connected: tokens.length > 0,
+            tokenCount: tokens.length,
+            tokens
+          }
+        })
+      )
+      
+      connectedParticipants = participantCalendarStatus.filter(p => p.connected)
+      
       // GROUP MEETING: Fetch calendars for all connected participants
       for (const participantStatus of connectedParticipants) {
         const { email, tokens } = participantStatus

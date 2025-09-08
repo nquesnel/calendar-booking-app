@@ -40,6 +40,7 @@ import { getTierFeatures, TIER_PRICING, hasAccess, getUpgradeMessage } from '@/l
 interface Booking {
   id: string
   title: string
+  description?: string
   creatorName: string
   creatorEmail: string
   recipientName?: string
@@ -48,6 +49,10 @@ interface Booking {
   duration: number
   status: string
   meetingType: string
+  meetingLink?: string
+  phoneNumber?: string
+  address?: string
+  meetingNotes?: string
   isGroupMeeting: boolean
   isRecurring: boolean
   participantCount?: number
@@ -68,6 +73,9 @@ interface UserProfile {
   name: string
   email: string
   plan: string
+  username?: string
+  firstName?: string
+  lastName?: string
   defaultVideoLink?: string
   defaultPhoneNumber?: string
   defaultAddress?: string
