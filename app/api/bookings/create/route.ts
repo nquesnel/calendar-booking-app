@@ -18,6 +18,10 @@ export async function POST(req: NextRequest) {
       phoneNumber,
       address,
       meetingNotes,
+      // Original invitee fields
+      inviteeEmail,
+      inviteeName,
+      personalMessage,
       // Group meeting fields
       isGroupMeeting,
       maxParticipants,
@@ -83,10 +87,24 @@ export async function POST(req: NextRequest) {
     })
 
     // Create participant records and send invites if group meeting
-    if (isGroupMeeting && participantEmails && Array.isArray(participantEmails)) {
-      const validEmails = participantEmails.filter(email => 
-        email && email.trim() && email.includes('@')
-      )
+    if (isGroupMeeting) {
+      // Combine original invitee with additional participants
+      let allParticipantEmails = []
+      
+      // Add original invitee if exists
+      if (inviteeEmail && inviteeEmail.trim()) {
+        allParticipantEmails.push(inviteeEmail.trim())
+      }
+      
+      // Add additional participants
+      if (participantEmails && Array.isArray(participantEmails)) {
+        const additionalEmails = participantEmails.filter(email => 
+          email && email.trim() && email.includes('@') && email.trim() !== inviteeEmail?.trim()
+        )
+        allParticipantEmails = [...allParticipantEmails, ...additionalEmails]
+      }
+      
+      const validEmails = allParticipantEmails
       
       // Create participant records
       await Promise.all(

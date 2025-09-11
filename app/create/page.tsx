@@ -909,7 +909,17 @@ export default function EnhancedCreateBooking() {
                           <input
                             type="checkbox"
                             checked={formData.isGroupMeeting}
-                            onChange={(e) => setFormData({ ...formData, isGroupMeeting: e.target.checked })}
+                            onChange={(e) => {
+                              const isGroupMeeting = e.target.checked
+                              const updatedFormData = { ...formData, isGroupMeeting }
+                              
+                              // If enabling group meeting and we have an invitee email, add it to participants
+                              if (isGroupMeeting && formData.inviteeEmail.trim() && !formData.participantEmails.includes(formData.inviteeEmail.trim())) {
+                                updatedFormData.participantEmails = [...formData.participantEmails, formData.inviteeEmail.trim()]
+                              }
+                              
+                              setFormData(updatedFormData)
+                            }}
                             disabled={!canUseGroupMeetings}
                             className="mr-3 h-4 w-4"
                           />
@@ -1051,9 +1061,17 @@ export default function EnhancedCreateBooking() {
                                   </button>
                                 )}
                               </div>
-                              <p className="text-xs text-slate-500 mt-2">
-                                {formData.participantEmails.filter(email => email.trim()).length + 1} of {formData.maxParticipants} participants added (including you)
-                              </p>
+                              <div className="mt-3 p-3 bg-slate-50 rounded-lg">
+                                <p className="text-xs font-medium text-slate-700 mb-2">
+                                  Participants ({formData.participantEmails.filter(email => email.trim()).length + 1} of {formData.maxParticipants}):
+                                </p>
+                                <div className="space-y-1">
+                                  <p className="text-xs text-slate-600">• {userInfo.name} ({userInfo.email}) - Organizer</p>
+                                  {formData.participantEmails.filter(email => email.trim()).map((email, index) => (
+                                    <p key={index} className="text-xs text-slate-600">• {email}</p>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         )}
