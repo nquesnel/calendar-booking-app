@@ -18,7 +18,7 @@ export function getGoogleAuthUrl(state: string): string {
     scope: scopes,
     state: state,
     prompt: 'consent',
-    include_granted_scopes: false
+    include_granted_scopes: true
   })
   
   console.log('Generated OAuth URL with scopes:', scopes, 'URL:', authUrl)
