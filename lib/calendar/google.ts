@@ -9,7 +9,6 @@ const oauth2Client = new google.auth.OAuth2(
 export function getGoogleAuthUrl(state: string): string {
   const scopes = [
     'https://www.googleapis.com/auth/calendar.readonly',
-    'https://www.googleapis.com/auth/calendar.events',
     'https://www.googleapis.com/auth/userinfo.email'
   ]
 
