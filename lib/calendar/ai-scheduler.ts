@@ -56,7 +56,9 @@ export function findOptimalMeetingTimes(
     )
     
     daySlots.forEach(slot => {
-      if (isAfter(slot.start, searchStart) && isBefore(slot.start, searchEnd)) {
+      const hour = slot.start.getHours()
+      // STRICT business hours validation - NO times outside 9am-5pm
+      if (hour >= 9 && hour < 17 && isAfter(slot.start, searchStart) && isBefore(slot.start, searchEnd)) {
         const score = calculateSlotScore(slot, timezone)
         availableSlots.push({ ...slot, score })
       }
