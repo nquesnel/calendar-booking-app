@@ -339,8 +339,14 @@ export async function findOptimalMeetingTimesWithPreferences(
   return diverseSuggestions
     .filter(slot => {
       const hour = slot.start.getHours()
+      console.log(`🕐 Checking slot: ${slot.start.toISOString()} (hour: ${hour})`)
       // FINAL BUSINESS HOURS CHECK - NO 5am suggestions!
-      return hour >= 9 && hour < 17
+      if (hour < 9 || hour >= 17) {
+        console.log(`❌ REJECTED: ${slot.start.toISOString()} - Outside business hours (${hour})`)
+        return false
+      }
+      console.log(`✅ ACCEPTED: ${slot.start.toISOString()} - Valid business hour (${hour})`)
+      return true
     })
     .slice(0, 5)
 }
