@@ -75,8 +75,8 @@ export default function StreamlinedCreatePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          creatorName: 'Neal Quesnel', // TODO: Get from auth
-          creatorEmail: 'neal@whatarmy.com', // TODO: Get from auth
+          creatorName: 'Current User', // This should come from auth
+          creatorEmail: 'user@example.com', // This should come from auth
           meetingTitle: formData.meetingTitle,
           meetingDescription: formData.meetingDescription,
           duration: formData.duration,
