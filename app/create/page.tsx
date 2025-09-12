@@ -514,26 +514,32 @@ export default function EnhancedCreateBooking() {
                       <label className="block text-sm font-medium text-slate-700 mb-2">
                         Duration
                       </label>
-                      <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                      <div className="grid grid-cols-3 gap-3">
                         {[
-                          { value: '15', label: '15 min' },
                           { value: '30', label: '30 min' },
-                          { value: '45', label: '45 min' },
                           { value: '60', label: '1 hour' },
-                          { value: '90', label: '1.5 hours' },
-                          { value: '120', label: '2 hours' }
+                          { value: 'custom', label: 'Custom' }
                         ].map(({ value, label }) => (
                           <button
                             key={value}
                             type="button"
-                            onClick={() => setFormData({ ...formData, duration: value })}
-                            className={`p-3 border-2 rounded-lg transition-all text-sm font-medium ${
-                              formData.duration === value
+                            onClick={() => {
+                              if (value === 'custom') {
+                                const customDuration = prompt('Enter duration in minutes:', '45')
+                                if (customDuration && !isNaN(Number(customDuration))) {
+                                  setFormData({ ...formData, duration: customDuration })
+                                }
+                              } else {
+                                setFormData({ ...formData, duration: value })
+                              }
+                            }}
+                            className={`p-3 border-2 rounded-lg transition-all text-sm font-medium min-h-[44px] ${
+                              formData.duration === value || (value === 'custom' && !['30', '60'].includes(formData.duration))
                                 ? 'border-blue-500 bg-blue-50 text-blue-700'
                                 : 'border-slate-300 hover:border-slate-400'
                             }`}
                           >
-                            {label}
+                            {value === 'custom' && !['30', '60'].includes(formData.duration) ? `${formData.duration}m` : label}
                           </button>
                         ))}
                       </div>
@@ -1124,7 +1130,14 @@ export default function EnhancedCreateBooking() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary w-full py-4 text-lg"
+                  onClick={(e) => {
+                    if (!formData.inviteeEmail || !formData.meetingTitle) {
+                      e.preventDefault()
+                      alert('Please fill in both email address and meeting title to continue.')
+                      return
+                    }
+                  }}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl"
                 >
                   {loading ? '✨ Sending Smart Invite...' : 
                    formData.isGroupMeeting ? '✨ Send Group Smart Invites' :
