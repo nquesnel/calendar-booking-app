@@ -72,7 +72,9 @@ export async function PUT(
 ) {
   try {
     const { token } = await params
+    console.log(`🔍 PUT /api/bookings/${token} - Request received`)
     const body = await req.json()
+    console.log(`📝 PUT body:`, body)
     
     const {
       title,
