@@ -174,71 +174,68 @@ export default function StreamlinedCreatePage() {
                   />
                 </div>
 
-                {/* Duration and Meeting Type Side by Side */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  {/* Simplified Duration - 3 Options Only */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Duration
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { value: 30, label: '30 min' },
-                        { value: 60, label: '1 hour' },
-                        { value: 0, label: 'Custom' }
-                      ].map(({ value, label }) => (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() => {
-                            if (value === 0) {
-                              const customDuration = prompt('Enter duration in minutes:', '45')
-                              if (customDuration && !isNaN(Number(customDuration))) {
-                                setFormData({ ...formData, duration: Number(customDuration) })
-                              }
-                            } else {
-                              setFormData({ ...formData, duration: value })
+                {/* Duration */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Duration
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { value: 30, label: '30 min' },
+                      { value: 60, label: '1 hour' },
+                      { value: 0, label: 'Custom' }
+                    ].map(({ value, label }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => {
+                          if (value === 0) {
+                            const customDuration = prompt('Enter duration in minutes:', '45')
+                            if (customDuration && !isNaN(Number(customDuration))) {
+                              setFormData({ ...formData, duration: Number(customDuration) })
                             }
-                          }}
-                          className={`p-3 text-sm font-medium rounded-lg transition-all ${
-                            formData.duration === value || (value === 0 && ![30, 60].includes(formData.duration))
-                              ? 'bg-blue-500 text-white shadow-md'
-                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                          }`}
-                        >
-                          {value === 0 && ![30, 60].includes(formData.duration) ? `${formData.duration}m` : label}
-                        </button>
-                      ))}
-                    </div>
+                          } else {
+                            setFormData({ ...formData, duration: value })
+                          }
+                        }}
+                        className={`p-3 text-sm font-medium rounded-lg transition-all ${
+                          formData.duration === value || (value === 0 && ![30, 60].includes(formData.duration))
+                            ? 'bg-blue-500 text-white shadow-md'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        {value === 0 && ![30, 60].includes(formData.duration) ? `${formData.duration}m` : label}
+                      </button>
+                    ))}
                   </div>
+                </div>
 
-                  {/* Meeting Type */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Meeting Type
-                    </label>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                      {[
-                        { value: 'video', label: 'Video', icon: Video },
-                        { value: 'phone', label: 'Phone', icon: Phone },
-                        { value: 'in-person', label: 'In-Person', icon: MapPin },
-                        { value: 'custom', label: 'Custom', icon: Settings }
-                      ].map(({ value, label, icon: Icon }) => (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() => setFormData({ ...formData, meetingType: value })}
-                          className={`p-3 text-sm font-medium rounded-lg transition-all flex items-center justify-center space-x-2 ${
-                            formData.meetingType === value
-                              ? 'bg-blue-500 text-white shadow-md'
-                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                          }`}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span>{label}</span>
-                        </button>
-                      ))}
-                    </div>
+                {/* Meeting Type */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Meeting Type
+                  </label>
+                  <div className="grid grid-cols-4 gap-3">
+                    {[
+                      { value: 'video', label: 'Video', icon: Video },
+                      { value: 'phone', label: 'Phone', icon: Phone },
+                      { value: 'in-person', label: 'In-Person', icon: MapPin },
+                      { value: 'custom', label: 'Custom', icon: Settings }
+                    ].map(({ value, label, icon: Icon }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, meetingType: value })}
+                        className={`p-3 text-sm font-medium rounded-lg transition-all flex items-center justify-center space-x-2 ${
+                          formData.meetingType === value
+                            ? 'bg-blue-500 text-white shadow-md'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{label}</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -332,20 +329,6 @@ export default function StreamlinedCreatePage() {
                   />
                 </div>
               )}
-            </div>
-
-            {/* Follow-up Reminders */}
-            <div className="bg-white rounded-xl border border-slate-200 p-4">
-              <label className="flex items-center space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.enableFollowUps}
-                  onChange={(e) => setFormData({ ...formData, enableFollowUps: e.target.checked })}
-                  className="h-5 w-5 text-blue-500 rounded"
-                />
-                <span className="text-sm font-medium text-slate-700">Send follow-up reminders if no response</span>
-                <Mail className="h-4 w-4 text-slate-400" />
-              </label>
             </div>
 
             {/* Advanced Options */}
@@ -469,12 +452,15 @@ export default function StreamlinedCreatePage() {
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading || !formData.inviteeEmail || !formData.meetingTitle}
-                className={`w-full font-semibold py-3 px-6 rounded-xl text-base transition-all shadow-lg min-h-[44px] ${
-                  loading || !formData.inviteeEmail || !formData.meetingTitle
-                    ? 'bg-slate-300 cursor-not-allowed text-slate-500'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-xl'
-                }`}
+                disabled={loading}
+                onClick={(e) => {
+                  if (!formData.inviteeEmail || !formData.meetingTitle) {
+                    e.preventDefault()
+                    alert('Please fill in both email address and meeting title to continue.')
+                    return
+                  }
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl text-base transition-all shadow-lg hover:shadow-xl min-h-[44px]"
               >
                 {loading ? (
                   <div className="flex items-center justify-center space-x-2">
