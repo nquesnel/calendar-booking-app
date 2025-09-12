@@ -45,6 +45,8 @@ export default function StreamlinedCreatePage() {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const [showFollowUps, setShowFollowUps] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [shareLink, setShareLink] = useState('')
   
   const [formData, setFormData] = useState<FormData>({
     inviteeName: '',
@@ -99,8 +101,36 @@ export default function StreamlinedCreatePage() {
 
       if (response.ok) {
         const data = await response.json()
-        // Redirect to success page
-        router.push(`/create?success=true&shareLink=${data.shareLink}`)
+        
+        // Automatically send email invite
+        if (formData.inviteeEmail && data.shareLink) {
+          try {
+            const inviteResponse = await fetch('/api/bookings/send-invite', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                shareLink: data.shareLink,
+                recipientEmail: formData.inviteeEmail,
+                recipientName: formData.inviteeName,
+                message: formData.personalMessage,
+                creatorName: 'Neal Quesnel',
+                meetingTitle: formData.meetingTitle
+              })
+            })
+            
+            if (inviteResponse.ok) {
+              console.log('📧 Email invite sent successfully')
+            } else {
+              console.error('Email sending failed:', await inviteResponse.text())
+            }
+          } catch (error) {
+            console.error('Error sending invite:', error)
+          }
+        }
+        
+        // Show success state
+        setShareLink(data.shareLink)
+        setShowSuccess(true)
       } else {
         throw new Error('Failed to create meeting')
       }
@@ -129,7 +159,8 @@ export default function StreamlinedCreatePage() {
             <p className="text-slate-600">Set up your meeting in under 30 seconds</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {!showSuccess ? (
+            <form onSubmit={handleSubmit} className="space-y-6">
             {/* PRIORITY 1: Essential Fields - Always Visible */}
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
               <div className="space-y-5">
@@ -137,7 +168,7 @@ export default function StreamlinedCreatePage() {
                 {/* Invitee Email - Most Important */}
                 <div>
                   <label className="block text-base font-semibold text-slate-900 mb-2">
-                    Who are you meeting with? *
+                    Invitee Email Address *
                   </label>
                   <input
                     type="email"
@@ -162,7 +193,7 @@ export default function StreamlinedCreatePage() {
                 {/* Meeting Title */}
                 <div>
                   <label className="block text-base font-semibold text-slate-900 mb-2">
-                    What's the meeting about? *
+                    Meeting Title *
                   </label>
                   <input
                     type="text"
@@ -442,7 +473,27 @@ export default function StreamlinedCreatePage() {
                       <RefreshCw className="h-4 w-4 text-slate-400" />
                       <span className="text-sm font-medium text-slate-700">Recurring Sessions (Premium)</span>
                     </label>
-                    <p className="text-xs text-slate-500 mt-1 ml-7">Set up weekly, bi-weekly, or monthly recurring meetings</p>
+                    
+                    {formData.isRecurring && (
+                      <div className="mt-3 ml-7">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Recurring Pattern
+                        </label>
+                        <select
+                          value={formData.recurringPattern}
+                          onChange={(e) => setFormData({ ...formData, recurringPattern: e.target.value })}
+                          className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="weekly">Weekly</option>
+                          <option value="biweekly">Bi-weekly</option>
+                          <option value="monthly">Monthly</option>
+                        </select>
+                      </div>
+                    )}
+                    
+                    {!formData.isRecurring && (
+                      <p className="text-xs text-slate-500 mt-1 ml-7">Set up weekly, bi-weekly, or monthly recurring meetings</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -494,6 +545,62 @@ export default function StreamlinedCreatePage() {
               </p>
             </div>
           </form>
+          ) : (
+            /* Success Screen */
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-green-200 text-center">
+              <div className="mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-full mb-4">
+                  <CheckCircle className="h-8 w-8 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Meeting Invitation Sent! ✨</h2>
+                <p className="text-slate-600">
+                  Your recipient will get an email and can book a time that works for both of you.
+                </p>
+              </div>
+              
+              <div className="mb-6 p-4 bg-slate-50 rounded-lg">
+                <p className="text-sm font-medium text-slate-700 mb-2">Share Link (backup):</p>
+                <code className="text-xs bg-white p-2 rounded border break-all">{shareLink}</code>
+              </div>
+              
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setShowSuccess(false)
+                    setShareLink('')
+                    setFormData({
+                      inviteeName: '',
+                      inviteeEmail: '',
+                      meetingTitle: '',
+                      meetingDescription: '',
+                      duration: 30,
+                      meetingType: 'video',
+                      meetingLink: '',
+                      phoneNumber: '',
+                      address: '',
+                      meetingNotes: '',
+                      personalMessage: '',
+                      enableFollowUps: false,
+                      isGroupMeeting: false,
+                      maxParticipants: 2,
+                      participantEmails: [],
+                      isRecurring: false,
+                      recurringPattern: 'weekly'
+                    })
+                  }}
+                  className="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+                >
+                  Create Another
+                </button>
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors"
+                >
+                  View Dashboard
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

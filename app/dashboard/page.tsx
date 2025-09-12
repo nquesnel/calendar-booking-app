@@ -850,10 +850,10 @@ export default function Dashboard() {
                   <h2 className="text-xl font-semibold text-slate-900">Your Meetings</h2>
                   <button
                     onClick={() => setShowPendingOnly(!showPendingOnly)}
-                    className={`btn-secondary text-sm ${showPendingOnly ? 'bg-blue-50 text-blue-700 border-blue-300' : ''}`}
+                    className={`btn-secondary text-sm flex items-center whitespace-nowrap ${showPendingOnly ? 'bg-blue-50 text-blue-700 border-blue-300' : ''}`}
                   >
-                    <Clock className="h-4 w-4 mr-1" />
-                    {showPendingOnly ? 'Show All' : 'Pending Only'}
+                    <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span>{showPendingOnly ? 'Show All' : 'Pending Only'}</span>
                   </button>
                 </div>
                 
