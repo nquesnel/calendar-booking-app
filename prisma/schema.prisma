@@ -261,37 +261,49 @@ model UserSession {
 
 // Follow-up tracking for meeting requests
 model MeetingFollowUp {
-  id                String    @id @default(uuid())
-  bookingId         String
-  followUpNumber    Int       // 1, 2, 3 (max follow-ups)
-  sentAt            DateTime  @default(now())
-  openedAt          DateTime? // Email open tracking
-  clickedAt         DateTime? // Link click tracking
-  emailType         String    // 'follow_up_1', 'follow_up_2', 'final_notice'
-  status            String    @default("sent") // sent, opened, clicked, bounced, unsubscribed
-  recipientEmail    String
-  createdAt         DateTime  @default(now())
+  id                    String    @id @default(uuid())
+  bookingId             String
+  followUpNumber        Int       // 1, 2, 3 (max follow-ups)
+  scheduledSendTime     DateTime  // When this should be sent (business hours calculated)
+  actualSentTime        DateTime? // When this was actually sent
+  sentAt                DateTime? // Legacy field for compatibility
+  openedAt              DateTime? // Email open tracking
+  clickedAt             DateTime? // Link click tracking
+  emailType             String    // 'follow_up_1', 'follow_up_2', 'final_notice'
+  status                String    @default("scheduled") // scheduled, sent, opened, clicked, bounced, unsubscribed, cancelled
+  recipientEmail        String
+  businessHoursCalculated Boolean @default(true) // Whether business hours logic was used
+  organizerTimezone     String?   // Organizer's timezone when scheduled
+  createdAt             DateTime  @default(now())
   
-  booking           Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  booking               Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   
   @@index([bookingId])
   @@index([recipientEmail])
-  @@index([sentAt])
+  @@index([scheduledSendTime])
+  @@index([status])
 }
 
 // User follow-up preferences and settings
 model UserFollowUpSettings {
-  id                    String    @id @default(uuid())
-  userId                String    @unique
-  enabledByDefault      Boolean   @default(true)  // Auto-enable follow-ups for new meetings
-  followUpTimingHours   Int       @default(48)    // Hours between follow-ups
-  maxFollowUps          Int       @default(2)     // Max number of follow-ups
-  customTemplate        String?   // Custom follow-up message template
-  respectUnsubscribes   Boolean   @default(true)  // Honor recipient unsubscribe requests
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  id                        String    @id @default(uuid())
+  userId                    String    @unique
+  enabledByDefault          Boolean   @default(true)  // Auto-enable follow-ups for new meetings
+  businessHoursOnly         Boolean   @default(true)  // Send only during business hours
+  businessHoursStart        Int       @default(9)     // Business hours start (24hr format)
+  businessHoursEnd          Int       @default(17)    // Business hours end (24hr format)
+  businessDays              String    @default("1,2,3,4,5") // Monday-Friday
+  timezone                  String?   // User's timezone (from calendar integration)
+  holidayCalendarEnabled    Boolean   @default(true)  // Pause during major holidays
+  firstFollowUpBusinessHours Int      @default(48)    // Business hours for first follow-up
+  secondFollowUpBusinessHours Int     @default(72)    // Business hours for second follow-up
+  maxFollowUps              Int       @default(2)     // Max number of follow-ups
+  customTemplate            String?   // Custom follow-up message template
+  respectUnsubscribes       Boolean   @default(true)  // Honor recipient unsubscribe requests
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
   
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Recipient unsubscribe preferences
@@ -307,6 +319,20 @@ model RecipientUnsubscribe {
   @@unique([recipientEmail, organizerEmail])
   @@index([recipientEmail])
   @@index([organizerEmail])
+}
+
+// Holiday calendar for business hours calculations
+model FollowUpHoliday {
+  id                String    @id @default(uuid())
+  date              DateTime  // Holiday date
+  name              String    // Holiday name (e.g., "Christmas", "New Year's Day")
+  countryCode       String    @default("US") // Country/region code
+  enabledByDefault  Boolean   @default(true) // Whether this holiday is active by default
+  createdAt         DateTime  @default(now())
+  
+  @@unique([date, countryCode])
+  @@index([date])
+  @@index([countryCode])
 }
 
 model Analytics {
