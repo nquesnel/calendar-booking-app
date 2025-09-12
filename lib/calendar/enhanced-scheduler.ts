@@ -226,6 +226,13 @@ export async function findOptimalMeetingTimesWithPreferences(
     // Generate potential slots every 15 minutes
     let slotStart = dayStart
     while (isBefore(addMinutes(slotStart, duration), dayEnd)) {
+      const hour = slotStart.getHours()
+      
+      // STRICT business hours validation - NO times outside 9am-5pm
+      if (hour < 9 || hour >= 17) {
+        slotStart = addMinutes(slotStart, 15)
+        continue
+      }
       if (isBefore(slotStart, searchStart)) {
         slotStart = addMinutes(slotStart, 15)
         continue
@@ -329,7 +336,13 @@ export async function findOptimalMeetingTimesWithPreferences(
     }
   }
   
-  return diverseSuggestions.slice(0, 5)
+  return diverseSuggestions
+    .filter(slot => {
+      const hour = slot.start.getHours()
+      // FINAL BUSINESS HOURS CHECK - NO 5am suggestions!
+      return hour >= 9 && hour < 17
+    })
+    .slice(0, 5)
 }
 
 export async function getSuggestedTimesWithPreferences(

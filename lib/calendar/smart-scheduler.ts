@@ -450,5 +450,11 @@ function rebalanceTimeDistribution(allSlots: SmartTimeSlot[], currentSuggestions
     best.contextLabel = '⭐ Best Match - ' + best.contextLabel.replace('⭐ Best Match - ', '')
   }
   
-  return suggestions.slice(0, 5)
+  return suggestions
+    .filter(slot => {
+      const hour = slot.start.getHours()
+      // FINAL BUSINESS HOURS CHECK - NO 5am suggestions!
+      return hour >= 9 && hour < 17
+    })
+    .slice(0, 5)
 }
