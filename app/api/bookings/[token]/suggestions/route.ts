@@ -92,21 +92,31 @@ export async function GET(
 
       // Get ALL calendar tokens for recipient
       let recipientTokens: any[] = []
+      console.log(`🔍 Looking for recipient tokens:`, {
+        recipientEmail: booking.recipientEmail,
+        recipientId: booking.recipientId
+      })
+      
       if (booking.recipientEmail) {
         recipientTokens = await prisma.calendarToken.findMany({
           where: {
             email: booking.recipientEmail
           }
         })
+        console.log(`📧 Found ${recipientTokens.length} tokens for email: ${booking.recipientEmail}`)
       } else if (booking.recipientId) {
         recipientTokens = await prisma.calendarToken.findMany({
           where: {
             userId: booking.recipientId
           }
         })
+        console.log(`👤 Found ${recipientTokens.length} tokens for userId: ${booking.recipientId}`)
+      } else {
+        console.log(`⚠️ No recipientEmail or recipientId set in booking`)
       }
 
       if (recipientTokens.length === 0) {
+        console.log(`❌ No calendar tokens found for recipient - this is likely the bug!`)
         return NextResponse.json(
           { error: 'Recipient calendar not connected. Please connect your calendar first.' },
           { status: 400 }
