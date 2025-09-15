@@ -264,8 +264,9 @@ export default function BookingPage() {
           hasBooking: !!currentBooking
         })
         
-        // Only proceed if we have booking data, user is not the organizer, AND booking is not already confirmed
-        if (data.profile && data.calendarConnected && currentBooking && userIsOrganizer === false && currentBooking.status !== 'confirmed') {
+        // Proceed if user has calendar connected AND booking is not already confirmed
+        // Allow both organizers (for testing) and recipients
+        if (data.profile && data.calendarConnected && currentBooking && currentBooking.status !== 'confirmed') {
           console.log('User already logged in with calendar connected, proceeding to time selection')
           
           // Set recipient info from authenticated user
