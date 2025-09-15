@@ -686,7 +686,20 @@ export default function StreamlinedCreatePage() {
                     <div><strong>To:</strong> {formData.inviteeEmail}</div>
                     <div><strong>Title:</strong> {formData.meetingTitle}</div>
                     <div><strong>Duration:</strong> {formData.duration} minutes</div>
-                    <div><strong>Type:</strong> {formData.meetingType}</div>
+                    <div><strong>Type:</strong> {formData.meetingType}
+                      {formData.meetingType === 'video' && formData.meetingLink && (
+                        <span className="text-slate-600"> - {formData.meetingLink}</span>
+                      )}
+                      {formData.meetingType === 'phone' && formData.phoneNumber && (
+                        <span className="text-slate-600"> - {formData.phoneNumber}</span>
+                      )}
+                      {formData.meetingType === 'in-person' && formData.address && (
+                        <span className="text-slate-600"> - {formData.address}</span>
+                      )}
+                      {formData.meetingType === 'custom' && formData.meetingNotes && (
+                        <span className="text-slate-600"> - {formData.meetingNotes}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -823,8 +836,8 @@ export default function StreamlinedCreatePage() {
 
       {/* Edit Modal Overlay */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-lg w-full max-h-[95vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-slate-900">Edit Meeting Details</h3>
               <button
@@ -930,9 +943,70 @@ export default function StreamlinedCreatePage() {
                   ))}
                 </div>
               </div>
+
+              {/* Meeting Type Specific Fields */}
+              {formData.meetingType === 'video' && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Video Meeting Link
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://zoom.us/j/your-meeting-id"
+                    value={formData.meetingLink}
+                    onChange={(e) => setFormData({ ...formData, meetingLink: e.target.value })}
+                    className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+              )}
+              
+              {formData.meetingType === 'phone' && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="+1 (555) 123-4567 or 'I'll call you'"
+                    value={formData.phoneNumber}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+              )}
+              
+              {formData.meetingType === 'in-person' && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Meeting Location
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="123 Main St, City, State or Building/Room"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+              )}
+              
+              {formData.meetingType === 'custom' && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Custom Instructions
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Custom meeting instructions..."
+                    value={formData.meetingNotes}
+                    onChange={(e) => setFormData({ ...formData, meetingNotes: e.target.value })}
+                    className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+              )}
             </div>
 
-            <div className="flex space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
               <button
                 onClick={() => setShowEditModal(false)}
                 className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
