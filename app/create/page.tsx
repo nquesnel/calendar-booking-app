@@ -666,14 +666,68 @@ export default function StreamlinedCreatePage() {
             ) : (
               /* Step 2: Calendar Connection */
               <div className="space-y-6">
-                {/* Meeting Preview */}
+                {/* Meeting Preview with Edit Links */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-green-200">
-                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Meeting Preview</h3>
-                  <div className="space-y-2 text-sm">
-                    <div><strong>To:</strong> {formData.inviteeEmail}</div>
-                    <div><strong>Title:</strong> {formData.meetingTitle}</div>
-                    <div><strong>Duration:</strong> {formData.duration} minutes</div>
-                    <div><strong>Type:</strong> {formData.meetingType}</div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-slate-900">Meeting Preview</h3>
+                    <button
+                      onClick={() => setStep(1)}
+                      className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1"
+                    >
+                      <span>Edit Details</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span><strong>To:</strong> {formData.inviteeEmail}</span>
+                      <button
+                        onClick={() => setStep(1)}
+                        className="text-blue-600 hover:text-blue-700 text-xs"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span><strong>Title:</strong> {formData.meetingTitle}</span>
+                      <button
+                        onClick={() => setStep(1)}
+                        className="text-blue-600 hover:text-blue-700 text-xs"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span><strong>Duration:</strong> {formData.duration} minutes</span>
+                      <button
+                        onClick={() => setStep(1)}
+                        className="text-blue-600 hover:text-blue-700 text-xs"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span><strong>Type:</strong> {formData.meetingType}</span>
+                      <button
+                        onClick={() => setStep(1)}
+                        className="text-blue-600 hover:text-blue-700 text-xs"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Estimated Send Time */}
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-blue-800 text-sm font-medium flex items-center space-x-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Your invite will be sent immediately after connecting</span>
+                    </p>
                   </div>
                 </div>
 
