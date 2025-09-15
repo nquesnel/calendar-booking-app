@@ -12,6 +12,8 @@ export async function GET(
 ) {
   try {
     const { token } = await params
+    console.log(`🔍 Suggestions API called for token: ${token}`)
+    
     const booking = await prisma.booking.findUnique({
       where: {
         shareToken: token
@@ -337,9 +339,10 @@ export async function GET(
       suggestions: enhancedSuggestions
     })
   } catch (error) {
-    console.error('Error generating suggestions:', error)
+    console.error('💥 Error generating suggestions:', error)
+    console.error('💥 Error details:', error.message, error.stack)
     return NextResponse.json(
-      { error: 'Failed to generate suggestions' },
+      { error: `Failed to generate suggestions: ${error.message}` },
       { status: 500 }
     )
   }
