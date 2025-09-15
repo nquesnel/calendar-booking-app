@@ -436,16 +436,48 @@ function applySmartDistribution(scoredSlots: SmartTimeSlot[]): SmartTimeSlot[] {
 }
 
 function rebalanceTimeDistribution(allSlots: SmartTimeSlot[], currentSuggestions: SmartTimeSlot[]): SmartTimeSlot[] {
-  const morningSlots = allSlots.filter(s => s.start.getHours() < 13)
-  const afternoonSlots = allSlots.filter(s => s.start.getHours() >= 13)
-  
   const suggestions: SmartTimeSlot[] = []
+  const usedDays = new Set<string>()
+  const usedHours = new Set<number>()
   
-  // Add top 2 morning options
-  suggestions.push(...morningSlots.slice(0, 2))
+  // Sort all slots by score
+  const sortedSlots = allSlots.sort((a, b) => b.score - a.score)
   
-  // Add top 3 afternoon options
-  suggestions.push(...afternoonSlots.slice(0, 3))
+  // Strategy: Pick diverse times across different days and time periods
+  for (const slot of sortedSlots) {
+    const hour = slot.start.getHours()
+    const dayKey = slot.start.toDateString()
+    
+    // Skip if outside business hours
+    if (hour < 9 || hour >= 17) continue
+    
+    // Avoid back-to-back times (within 2 hours of existing suggestions)
+    const tooCloseToExisting = suggestions.some(existing => {
+      const timeDiff = Math.abs(slot.start.getTime() - existing.start.getTime())
+      const hoursDiff = timeDiff / (1000 * 60 * 60)
+      return hoursDiff < 2 // At least 2 hours apart
+    })
+    
+    if (tooCloseToExisting) continue
+    
+    suggestions.push(slot)
+    usedDays.add(dayKey)
+    usedHours.add(hour)
+    
+    // Stop when we have enough diverse suggestions
+    if (suggestions.length >= 3) break
+  }
+  
+  // If we don't have enough, fill with best remaining slots
+  if (suggestions.length < 3) {
+    for (const slot of sortedSlots) {
+      const hour = slot.start.getHours()
+      if (hour >= 9 && hour < 17 && !suggestions.includes(slot)) {
+        suggestions.push(slot)
+        if (suggestions.length >= 3) break
+      }
+    }
+  }
   
   // Mark the overall best as best match
   if (suggestions.length > 0) {
@@ -456,11 +488,5 @@ function rebalanceTimeDistribution(allSlots: SmartTimeSlot[], currentSuggestions
     best.contextLabel = '⭐ Best Match - ' + best.contextLabel.replace('⭐ Best Match - ', '')
   }
   
-  return suggestions
-    .filter(slot => {
-      const hour = slot.start.getHours()
-      // FINAL BUSINESS HOURS CHECK - NO 5am suggestions!
-      return hour >= 9 && hour < 17
-    })
-    .slice(0, 5)
+  return suggestions.slice(0, 5)
 }
