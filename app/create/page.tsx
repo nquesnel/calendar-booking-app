@@ -720,12 +720,6 @@ export default function StreamlinedCreatePage() {
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => setStep(1)}
-                    className="text-slate-500 hover:text-slate-700 text-sm"
-                  >
-                    ← Back to Edit Meeting Details
-                  </button>
                 </div>
 
                 {/* Meeting Preview with Single Edit Button */}
