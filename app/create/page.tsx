@@ -16,7 +16,8 @@ import {
   Clock,
   Calendar,
   CheckCircle,
-  RefreshCw
+  RefreshCw,
+  Copy
 } from 'lucide-react'
 
 interface FormData {
@@ -47,6 +48,7 @@ export default function StreamlinedCreatePage() {
   const [showFollowUps, setShowFollowUps] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [shareLink, setShareLink] = useState('')
+  const [copied, setCopied] = useState(false)
   
   const [formData, setFormData] = useState<FormData>({
     inviteeName: '',
@@ -139,6 +141,16 @@ export default function StreamlinedCreatePage() {
       alert('Failed to create meeting. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareLink)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
     }
   }
 
@@ -560,7 +572,16 @@ export default function StreamlinedCreatePage() {
               
               <div className="mb-6 p-4 bg-slate-50 rounded-lg">
                 <p className="text-sm font-medium text-slate-700 mb-2">Share Link (backup):</p>
-                <code className="text-xs bg-white p-2 rounded border break-all">{shareLink}</code>
+                <div className="flex items-center space-x-3">
+                  <code className="flex-1 text-xs bg-white p-3 rounded border break-all">{shareLink}</code>
+                  <button
+                    onClick={copyToClipboard}
+                    className="px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                  >
+                    <Copy className="h-4 w-4" />
+                    <span>{copied ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                </div>
               </div>
               
               <div className="flex gap-4 justify-center">
@@ -568,6 +589,7 @@ export default function StreamlinedCreatePage() {
                   onClick={() => {
                     setShowSuccess(false)
                     setShareLink('')
+                    setCopied(false)
                     setFormData({
                       inviteeName: '',
                       inviteeEmail: '',
