@@ -1,4 +1,5 @@
 import { addMinutes, isWithinInterval, addDays, setHours, setMinutes, isBefore, isAfter, differenceInMinutes, getDay, format } from 'date-fns'
+import { toZonedTime, fromZonedTime } from 'date-fns-tz'
 import { prisma } from '@/lib/db'
 
 interface CalendarEvent {
@@ -217,8 +218,13 @@ export async function findOptimalMeetingTimesWithPreferences(
     const startTime = parseTime(latestStart)
     const endTime = parseTime(earliestEnd)
     
-    const dayStart = setMinutes(setHours(currentDay, startTime.hours), startTime.minutes)
-    const dayEnd = setMinutes(setHours(currentDay, endTime.hours), endTime.minutes)
+    // Create times in user's timezone first, then convert to UTC
+    const localDay = toZonedTime(currentDay, timezone)
+    const localDayStart = setMinutes(setHours(localDay, startTime.hours), startTime.minutes)
+    const localDayEnd = setMinutes(setHours(localDay, endTime.hours), endTime.minutes)
+    
+    const dayStart = fromZonedTime(localDayStart, timezone) // Convert to UTC
+    const dayEnd = fromZonedTime(localDayEnd, timezone) // Convert to UTC
     
     // Skip if the available window is too small
     if (differenceInMinutes(dayEnd, dayStart) < duration) continue

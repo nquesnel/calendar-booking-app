@@ -97,7 +97,8 @@ export default function StreamlinedCreatePage() {
           participantEmails: formData.participantEmails,
           enableFollowUps: formData.enableFollowUps,
           isRecurring: formData.isRecurring,
-          recurringPattern: formData.recurringPattern
+          recurringPattern: formData.recurringPattern,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone // Detect user's timezone
         })
       })
 

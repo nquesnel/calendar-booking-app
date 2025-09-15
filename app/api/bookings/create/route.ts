@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
       preferredDays,
       // Group deadline settings
       deadlineHours,
-      autoSelectAtDeadline
+      autoSelectAtDeadline,
+      // Timezone
+      timeZone
     } = body
 
     // Generate unique share token
@@ -75,6 +77,9 @@ export async function POST(req: NextRequest) {
         timeOfDayPref: timeOfDayPref || null,
         avoidDays: avoidDays || null,
         preferredDays: preferredDays || null,
+        
+        // Timezone (store user's actual timezone instead of UTC default)
+        timeZone: timeZone || 'UTC',
         
         // Group meeting deadline settings
         ...(isGroupMeeting && {

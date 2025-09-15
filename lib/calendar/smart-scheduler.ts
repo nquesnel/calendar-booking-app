@@ -1,4 +1,5 @@
 import { addMinutes, addDays, setHours, setMinutes, isBefore, isAfter, getDay, format, startOfWeek, endOfWeek, differenceInMinutes } from 'date-fns'
+import { toZonedTime, fromZonedTime } from 'date-fns-tz'
 import { prisma } from '@/lib/db'
 
 interface CalendarEvent {
@@ -208,13 +209,17 @@ function generatePotentialSlots(
     // Generate slots for this day
     for (const timeSlot of timeSlots) {
       for (let hour = timeSlot.start; hour < timeSlot.end; hour += 0.5) {
-        const slotStart = setMinutes(setHours(currentDate, Math.floor(hour)), (hour % 1) * 60)
+        // Create time in user's timezone first, then convert to UTC for storage
+        const localDate = toZonedTime(currentDate, timezone)
+        const localSlotStart = setMinutes(setHours(localDate, Math.floor(hour)), (hour % 1) * 60)
+        const slotStart = fromZonedTime(localSlotStart, timezone) // Convert to UTC
         const slotEnd = addMinutes(slotStart, duration)
         
-        // Skip if slot would go past end time
-        if (slotEnd.getHours() >= timeSlot.end) continue
+        // Skip if slot would go past end time (check in local timezone)
+        const localSlotEnd = toZonedTime(slotEnd, timezone)
+        if (localSlotEnd.getHours() >= timeSlot.end) continue
         
-        // Skip lunch hour (12-1pm)
+        // Skip lunch hour (12-1pm) in local timezone
         if (hour >= 12 && hour < 13) continue
         
         let contextLabel = ''
