@@ -42,7 +42,8 @@ export async function POST(
     }
 
     // Update booking with selected time
-    await prisma.booking.update({
+    console.log(`📅 Confirming time: ${suggestion.startTime} for booking ${booking.id}`)
+    const updatedBooking = await prisma.booking.update({
       where: { id: booking.id },
       data: {
         recipientName,
@@ -51,6 +52,7 @@ export async function POST(
         status: 'confirmed'
       }
     })
+    console.log(`✅ Booking updated with selectedTime: ${updatedBooking.selectedTime}`)
 
     // Mark suggestion as selected
     await prisma.timeSuggestion.update({
@@ -80,8 +82,10 @@ export async function POST(
 
     // Create event ONLY in creator's calendar (recipient gets automatic invitation)
     if (creatorToken) {
+      console.log(`📅 Creating calendar event for creator: ${booking.creatorEmail} (${creatorToken.provider})`)
       try {
         if (creatorToken.provider === 'google') {
+          console.log(`🎯 Creating Google Calendar event with data:`, eventData)
           const event = await createGoogleCalendarEvent(
             creatorToken.accessToken,
             eventData
@@ -90,7 +94,7 @@ export async function POST(
             where: { id: booking.id },
             data: { googleEventId: event.id }
           })
-          console.log('Created shared Google Calendar event:', event.id)
+          console.log('✅ Created shared Google Calendar event:', event.id)
         } else if (creatorToken.provider === 'microsoft') {
           const event = await createMicrosoftCalendarEvent(
             creatorToken.accessToken,

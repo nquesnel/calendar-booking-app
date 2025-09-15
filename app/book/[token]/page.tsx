@@ -339,6 +339,8 @@ export default function BookingPage() {
       const data = await response.json()
       
       if (data.success) {
+        // Reload booking data to get the confirmed time
+        await fetchBookingData()
         setStep(3)
       }
     } catch (error) {
