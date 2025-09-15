@@ -50,6 +50,7 @@ export default function StreamlinedCreatePage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [shareLink, setShareLink] = useState('')
   const [copied, setCopied] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   
   const [formData, setFormData] = useState<FormData>({
     inviteeName: '',
@@ -671,7 +672,7 @@ export default function StreamlinedCreatePage() {
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-slate-900">Meeting Preview</h3>
                     <button
-                      onClick={() => setStep(1)}
+                      onClick={() => setShowEditModal(true)}
                       className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1 px-3 py-1 rounded-lg hover:bg-blue-50 transition-colors"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -819,6 +820,135 @@ export default function StreamlinedCreatePage() {
           )}
         </div>
       </div>
+
+      {/* Edit Modal Overlay */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-900">Edit Meeting Details</h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Invitee Email Address *
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.inviteeEmail}
+                  onChange={(e) => setFormData({ ...formData, inviteeEmail: e.target.value })}
+                  className="w-full p-3 text-base border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Meeting Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.meetingTitle}
+                  onChange={(e) => setFormData({ ...formData, meetingTitle: e.target.value })}
+                  className="w-full p-3 text-base border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Duration */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Duration
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: 30, label: '30 min' },
+                    { value: 60, label: '1 hour' },
+                    { value: 0, label: 'Custom' }
+                  ].map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => {
+                        if (value === 0) {
+                          const customDuration = prompt('Enter duration in minutes:', '45')
+                          if (customDuration && !isNaN(Number(customDuration))) {
+                            setFormData({ ...formData, duration: Number(customDuration) })
+                          }
+                        } else {
+                          setFormData({ ...formData, duration: value })
+                        }
+                      }}
+                      className={`p-2 text-sm font-medium rounded-lg transition-all ${
+                        formData.duration === value || (value === 0 && ![30, 60].includes(formData.duration))
+                          ? 'bg-blue-500 text-white shadow-md'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {value === 0 && ![30, 60].includes(formData.duration) ? `${formData.duration}m` : label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Meeting Type */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Meeting Type
+                </label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { value: 'video', label: 'Video', icon: Video },
+                    { value: 'phone', label: 'Phone', icon: Phone },
+                    { value: 'in-person', label: 'In-Person', icon: MapPin },
+                    { value: 'custom', label: 'Custom', icon: Settings }
+                  ].map(({ value, label, icon: Icon }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, meetingType: value })}
+                      className={`p-2 text-xs font-medium rounded-lg transition-all flex flex-col items-center space-y-1 ${
+                        formData.meetingType === value
+                          ? 'bg-blue-500 text-white shadow-md'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
