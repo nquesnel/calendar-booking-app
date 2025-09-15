@@ -340,7 +340,15 @@ export default function BookingPage() {
       
       if (data.success) {
         // Reload booking data to get the confirmed time
-        await fetchBookingData()
+        try {
+          const bookingResponse = await fetch(`/api/bookings/${token}`)
+          const bookingData = await bookingResponse.json()
+          if (bookingData.booking) {
+            setBooking(bookingData.booking)
+          }
+        } catch (error) {
+          console.error('Error reloading booking data:', error)
+        }
         setStep(3)
       }
     } catch (error) {
