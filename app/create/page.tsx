@@ -758,17 +758,17 @@ export default function StreamlinedCreatePage() {
                     <div><strong>Title:</strong> {formData.meetingTitle}</div>
                     <div><strong>Duration:</strong> {formData.duration} minutes</div>
                     <div><strong>Type:</strong> {formData.meetingType.charAt(0).toUpperCase() + formData.meetingType.slice(1)}</div>
-                    {formData.meetingType === 'video' && formData.meetingLink && (
-                      <div><strong>Link:</strong> {formData.meetingLink}</div>
+                    {formData.meetingType === 'video' && (
+                      <div><strong>Link:</strong> {formData.meetingLink || 'To be provided'}</div>
                     )}
-                    {formData.meetingType === 'phone' && formData.phoneNumber && (
-                      <div><strong>Phone:</strong> {formData.phoneNumber}</div>
+                    {formData.meetingType === 'phone' && (
+                      <div><strong>Phone:</strong> {formData.phoneNumber || 'To be provided'}</div>
                     )}
-                    {formData.meetingType === 'in-person' && formData.address && (
-                      <div><strong>Location:</strong> {formData.address}</div>
+                    {formData.meetingType === 'in-person' && (
+                      <div><strong>Location:</strong> {formData.address || 'To be provided'}</div>
                     )}
-                    {formData.meetingType === 'custom' && formData.meetingNotes && (
-                      <div><strong>Details:</strong> {formData.meetingNotes}</div>
+                    {formData.meetingType === 'custom' && (
+                      <div><strong>Details:</strong> {formData.meetingNotes || 'To be provided'}</div>
                     )}
                   </div>
                 </div>
