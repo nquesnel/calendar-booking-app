@@ -42,6 +42,7 @@ interface FormData {
 
 export default function StreamlinedCreatePage() {
   const router = useRouter()
+  const [step, setStep] = useState(1) // 1: Meeting Details, 2: Connect Calendar
   const [loading, setLoading] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
@@ -70,34 +71,87 @@ export default function StreamlinedCreatePage() {
     recurringPattern: 'weekly'
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  // Check for OAuth callback and pending meeting
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const creatorConnected = urlParams.get('creator_connected')
+    
+    if (creatorConnected) {
+      // User just authenticated, process pending meeting
+      processPendingMeeting()
+    }
+  }, [])
+
+  const processPendingMeeting = async () => {
+    try {
+      const pendingData = sessionStorage.getItem('pendingMeeting')
+      if (!pendingData) {
+        alert('Meeting session expired. Please create your meeting again.')
+        setStep(1)
+        return
+      }
+
+      const meetingData = JSON.parse(pendingData)
+      
+      // Check expiration
+      if (Date.now() > meetingData.expiresAt) {
+        sessionStorage.removeItem('pendingMeeting')
+        alert('Meeting session expired. Please create your meeting again.')
+        setStep(1)
+        return
+      }
+
+      // Create meeting with authenticated user data
+      setLoading(true)
+      await handleSubmit(null, meetingData)
+      
+      // Clean up
+      sessionStorage.removeItem('pendingMeeting')
+    } catch (error) {
+      console.error('Error processing pending meeting:', error)
+      alert('Error processing meeting. Please try again.')
+      setStep(1)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent | null, pendingMeetingData?: any) => {
+    if (e) e.preventDefault()
     setLoading(true)
     
     try {
+      // Get authenticated user data
+      const profileResponse = await fetch('/api/profile')
+      const profileData = await profileResponse.json()
+      
+      if (!profileData.profile) {
+        throw new Error('User not authenticated')
+      }
+      
+      const dataToUse = pendingMeetingData || formData
+      
       const response = await fetch('/api/bookings/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          creatorName: 'Neal Quesnel', // TODO: Get from auth
-          creatorEmail: 'neal@whatarmy.com', // TODO: Get from auth
-          meetingTitle: formData.meetingTitle,
-          meetingDescription: formData.meetingDescription,
-          duration: formData.duration,
-          meetingType: formData.meetingType,
-          meetingLink: formData.meetingLink,
-          phoneNumber: formData.phoneNumber,
-          address: formData.address,
-          meetingNotes: formData.meetingNotes,
-          inviteeEmail: formData.inviteeEmail,
-          inviteeName: formData.inviteeName,
-          personalMessage: formData.personalMessage,
-          isGroupMeeting: formData.isGroupMeeting,
-          maxParticipants: formData.maxParticipants,
-          participantEmails: formData.participantEmails,
-          enableFollowUps: formData.enableFollowUps,
-          isRecurring: formData.isRecurring,
-          recurringPattern: formData.recurringPattern,
+          creatorName: profileData.profile.name,
+          creatorEmail: profileData.profile.email,
+          meetingTitle: dataToUse.meetingTitle,
+          meetingDescription: dataToUse.meetingDescription,
+          duration: dataToUse.duration,
+          meetingType: dataToUse.meetingType,
+          meetingLink: dataToUse.meetingLink,
+          phoneNumber: dataToUse.phoneNumber,
+          address: dataToUse.address,
+          meetingNotes: dataToUse.meetingNotes,
+          inviteeEmail: dataToUse.inviteeEmail,
+          inviteeName: dataToUse.inviteeName,
+          personalMessage: dataToUse.personalMessage,
+          isGroupMeeting: dataToUse.isGroupMeeting,
+          maxParticipants: dataToUse.maxParticipants,
+          participantEmails: dataToUse.participantEmails,
+          enableFollowUps: dataToUse.enableFollowUps,
+          isRecurring: dataToUse.isRecurring,
+          recurringPattern: dataToUse.recurringPattern,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone // Detect user's timezone
         })
       })
@@ -106,18 +160,18 @@ export default function StreamlinedCreatePage() {
         const data = await response.json()
         
         // Automatically send email invite
-        if (formData.inviteeEmail && data.shareLink) {
+        if (dataToUse.inviteeEmail && data.shareLink) {
           try {
             const inviteResponse = await fetch('/api/bookings/send-invite', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 shareLink: data.shareLink,
-                recipientEmail: formData.inviteeEmail,
-                recipientName: formData.inviteeName,
-                message: formData.personalMessage,
-                creatorName: 'Neal Quesnel',
-                meetingTitle: formData.meetingTitle
+                recipientEmail: dataToUse.inviteeEmail,
+                recipientName: dataToUse.inviteeName,
+                message: dataToUse.personalMessage,
+                creatorName: profileData.profile.name,
+                meetingTitle: dataToUse.meetingTitle
               })
             })
             
@@ -145,6 +199,28 @@ export default function StreamlinedCreatePage() {
     }
   }
 
+  const handleStepOne = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Validate required fields
+    if (!formData.inviteeEmail || !formData.meetingTitle) {
+      alert('Please fill in both email address and meeting title to continue.')
+      return
+    }
+    
+    // Store meeting details in session storage with expiration
+    const meetingData = {
+      ...formData,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hour expiration
+    }
+    
+    sessionStorage.setItem('pendingMeeting', JSON.stringify(meetingData))
+    
+    // Proceed to Step 2
+    setStep(2)
+  }
+
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(shareLink)
@@ -168,12 +244,41 @@ export default function StreamlinedCreatePage() {
       <div className="container-width py-8">
         <div className="max-w-2xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Create Meeting Request</h1>
-            <p className="text-slate-600">Set up your meeting in under 30 seconds</p>
+            {/* Progress Indicator */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center space-x-4">
+                <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-blue-600' : 'text-slate-400'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    step >= 1 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
+                  }`}>
+                    1
+                  </div>
+                  <span className="font-medium">Create Meeting</span>
+                </div>
+                <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`}></div>
+                <div className={`flex items-center space-x-2 ${step >= 2 ? 'text-blue-600' : 'text-slate-400'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    step >= 2 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
+                  }`}>
+                    2
+                  </div>
+                  <span className="font-medium">Link Calendar</span>
+                </div>
+              </div>
+            </div>
+            
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">
+              {step === 1 ? 'Create Meeting Request' : 'Connect Your Calendar'}
+            </h1>
+            <p className="text-slate-600">
+              {step === 1 ? 'Set up your meeting details' : 'Quick 30-second setup to send your invite'}
+            </p>
           </div>
 
           {!showSuccess ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            step === 1 ? (
+              /* Step 1: Meeting Details Form */
+              <form onSubmit={handleStepOne} className="space-y-6">
             {/* PRIORITY 1: Essential Fields - Always Visible */}
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
               <div className="space-y-5">
@@ -534,7 +639,7 @@ export default function StreamlinedCreatePage() {
                 ) : (
                   <div className="flex items-center justify-center space-x-2">
                     <Calendar className="h-5 w-5" />
-                    <span>Send Smart Invite</span>
+                    <span>Continue to Step 2</span>
                   </div>
                 )}
               </button>
@@ -557,7 +662,76 @@ export default function StreamlinedCreatePage() {
                 )}
               </p>
             </div>
-          </form>
+              </form>
+            ) : (
+              /* Step 2: Calendar Connection */
+              <div className="space-y-6">
+                {/* Meeting Preview */}
+                <div className="bg-white rounded-2xl p-5 shadow-sm border border-green-200">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Meeting Preview</h3>
+                  <div className="space-y-2 text-sm">
+                    <div><strong>To:</strong> {formData.inviteeEmail}</div>
+                    <div><strong>Title:</strong> {formData.meetingTitle}</div>
+                    <div><strong>Duration:</strong> {formData.duration} minutes</div>
+                    <div><strong>Type:</strong> {formData.meetingType}</div>
+                  </div>
+                </div>
+
+                {/* Calendar Connection */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center">
+                  <div className="mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                      <Calendar className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">Connect Your Calendar</h3>
+                    <p className="text-slate-600">
+                      Connect your calendar to enable smart scheduling and automatically send the meeting invite.
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4 mb-6">
+                    <button
+                      onClick={() => window.location.href = '/api/auth/google/creator'}
+                      className="flex items-center justify-center p-4 border-2 border-slate-300 rounded-xl hover:border-blue-400 transition-colors"
+                    >
+                      <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                      <div className="text-left">
+                        <div className="font-medium">Google Calendar</div>
+                        <div className="text-xs text-slate-600">Most popular</div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => window.location.href = '/api/auth/microsoft/creator'}
+                      className="flex items-center justify-center p-4 border-2 border-slate-300 rounded-xl hover:border-blue-400 transition-colors"
+                    >
+                      <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
+                        <path fill="#00A4EF" d="M11.5 11.5v-11h-11v11h11z"/>
+                        <path fill="#FFB900" d="M24 11.5v-11h-11v11h11z"/>
+                        <path fill="#00D924" d="M11.5 24v-11h-11v11h11z"/>
+                        <path fill="#FF3E00" d="M24 24v-11h-11v11h11z"/>
+                      </svg>
+                      <div className="text-left">
+                        <div className="font-medium">Microsoft Outlook</div>
+                        <div className="text-xs text-slate-600">Enterprise</div>
+                      </div>
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => setStep(1)}
+                    className="text-slate-500 hover:text-slate-700 text-sm"
+                  >
+                    ← Back to Edit Meeting Details
+                  </button>
+                </div>
+              </div>
+            )
           ) : (
             /* Success Screen */
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-green-200 text-center">
