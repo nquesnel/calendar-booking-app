@@ -667,52 +667,16 @@ export default function StreamlinedCreatePage() {
             ) : (
               /* Step 2: Calendar Connection */
               <div className="space-y-6">
-                {/* Meeting Preview with Single Edit Button */}
-                <div className="bg-white rounded-2xl p-5 shadow-sm border border-green-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-slate-900">Meeting Preview</h3>
-                    <button
-                      onClick={() => setShowEditModal(true)}
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1 px-3 py-1 rounded-lg hover:bg-blue-50 transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                      <span>Edit Details</span>
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div><strong>To:</strong> {formData.inviteeEmail}</div>
-                    <div><strong>Title:</strong> {formData.meetingTitle}</div>
-                    <div><strong>Duration:</strong> {formData.duration} minutes</div>
-                    <div><strong>Type:</strong> {formData.meetingType}
-                      {formData.meetingType === 'video' && formData.meetingLink && (
-                        <span className="text-slate-600"> - {formData.meetingLink}</span>
-                      )}
-                      {formData.meetingType === 'phone' && formData.phoneNumber && (
-                        <span className="text-slate-600"> - {formData.phoneNumber}</span>
-                      )}
-                      {formData.meetingType === 'in-person' && formData.address && (
-                        <span className="text-slate-600"> - {formData.address}</span>
-                      )}
-                      {formData.meetingType === 'custom' && formData.meetingNotes && (
-                        <span className="text-slate-600"> - {formData.meetingNotes}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
                 {/* Calendar Connection */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center">
                   <div className="mb-6">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                      <Calendar className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900">Connect Your Calendar to Send Your Invite</h3>
+                    <h3 className="text-xl font-semibold text-slate-900 flex items-center justify-center space-x-2">
+                      <Calendar className="h-6 w-6 text-blue-600" />
+                      <span>Connect Your Calendar to Send Your Invite</span>
+                    </h3>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <button
                       onClick={() => window.location.href = '/api/auth/google/creator'}
                       className="flex items-center justify-center p-4 border-2 border-slate-300 rounded-xl hover:border-blue-400 transition-colors"
@@ -762,6 +726,40 @@ export default function StreamlinedCreatePage() {
                   >
                     ← Back to Edit Meeting Details
                   </button>
+                </div>
+
+                {/* Meeting Preview with Single Edit Button */}
+                <div className="bg-white rounded-2xl p-5 shadow-sm border border-green-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-slate-900">Meeting Preview</h3>
+                    <button
+                      onClick={() => setShowEditModal(true)}
+                      className="text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div><strong>To:</strong> {formData.inviteeEmail}</div>
+                    <div><strong>Title:</strong> {formData.meetingTitle}</div>
+                    <div><strong>Duration:</strong> {formData.duration} minutes</div>
+                    <div><strong>Type:</strong> {formData.meetingType.charAt(0).toUpperCase() + formData.meetingType.slice(1)}</div>
+                    {formData.meetingType === 'video' && formData.meetingLink && (
+                      <div><strong>Link:</strong> {formData.meetingLink}</div>
+                    )}
+                    {formData.meetingType === 'phone' && formData.phoneNumber && (
+                      <div><strong>Phone:</strong> {formData.phoneNumber}</div>
+                    )}
+                    {formData.meetingType === 'in-person' && formData.address && (
+                      <div><strong>Location:</strong> {formData.address}</div>
+                    )}
+                    {formData.meetingType === 'custom' && formData.meetingNotes && (
+                      <div><strong>Details:</strong> {formData.meetingNotes}</div>
+                    )}
+                  </div>
                 </div>
               </div>
             )
