@@ -58,7 +58,7 @@ export async function getSmartSuggestions(
   console.log('⏰ Search window:', searchWindow)
   
   // Generate potential time slots
-  const potentialSlots = generatePotentialSlots(searchWindow, duration, organizerPrefs)
+  const potentialSlots = generatePotentialSlots(searchWindow, duration, organizerPrefs, timezone)
   console.log(`🎲 Generated ${potentialSlots.length} potential slots`)
   
   // Filter available slots (no conflicts)
@@ -169,7 +169,8 @@ function getSearchWindow(prefs: OrganizerPreferences): { start: Date, end: Date,
 function generatePotentialSlots(
   searchWindow: { start: Date, end: Date, maxDays: number },
   duration: number,
-  prefs: OrganizerPreferences
+  prefs: OrganizerPreferences,
+  timezone: string = 'UTC'
 ): SmartTimeSlot[] {
   const slots: SmartTimeSlot[] = []
   
