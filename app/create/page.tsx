@@ -675,8 +675,12 @@ export default function StreamlinedCreatePage() {
                 <div className="absolute bottom-32 right-16 w-32 h-32 bg-blue-300 bg-opacity-20 rounded-full blur-2xl animate-pulse"></div>
                 <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-purple-400 bg-opacity-15 rounded-full blur-lg animate-bounce" style={{animationDelay: '2s'}}></div>
                 
-                <div className="relative z-10 w-full px-8 sm:px-16 lg:px-24 py-12 sm:py-20">
-                  <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 max-w-none">
+                {/* Page Container with Exact Specifications */}
+                <div className="relative z-10 mx-auto px-4 md:px-8 lg:px-8 py-12 sm:py-20" style={{
+                  maxWidth: '1400px',
+                  minWidth: '320px'
+                }}>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-8 lg:gap-16 items-start">
                     
                     {/* LEFT COLUMN - CONNECTION HERO (Full width on desktop) */}
                     <div className="space-y-10">
@@ -693,12 +697,16 @@ export default function StreamlinedCreatePage() {
                         </p>
                       </div>
 
-                      {/* Calendar Connection Buttons - WIDER Side-by-Side Layout */}
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                      {/* Calendar Connection Buttons - Exact Specifications */}
+                      <div className="space-y-4 flex flex-col items-center lg:items-start">
                         <button
                           onClick={() => window.location.href = '/api/auth/google/creator'}
-                          className="group w-full bg-white rounded-3xl p-6 lg:p-8 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-6 border-3 border-blue-500 min-h-[100px] lg:min-h-[140px]"
-                          style={{boxShadow: '0 20px 40px rgba(66,133,244,0.3)'}}
+                          className="group bg-white rounded-3xl p-6 lg:p-8 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center space-x-6 border-3 border-blue-500 min-h-[100px] lg:min-h-[120px]"
+                          style={{
+                            width: '100%',
+                            maxWidth: '450px',
+                            boxShadow: '0 20px 40px rgba(66,133,244,0.3)'
+                          }}
                         >
                           <svg className="w-10 h-10 lg:w-12 lg:h-12 group-hover:scale-110 transition-transform flex-shrink-0" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -719,8 +727,12 @@ export default function StreamlinedCreatePage() {
 
                         <button
                           onClick={() => window.location.href = '/api/auth/microsoft/creator'}
-                          className="group w-full bg-white rounded-3xl p-6 lg:p-8 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-6 border-3 border-orange-500 min-h-[100px] lg:min-h-[140px]"
-                          style={{boxShadow: '0 20px 40px rgba(0,120,212,0.3)'}}
+                          className="group bg-white rounded-3xl p-6 lg:p-8 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center space-x-6 border-3 border-orange-500 min-h-[100px] lg:min-h-[120px]"
+                          style={{
+                            width: '100%',
+                            maxWidth: '450px',
+                            boxShadow: '0 20px 40px rgba(0,120,212,0.3)'
+                          }}
                         >
                           <svg className="w-10 h-10 lg:w-12 lg:h-12 group-hover:scale-110 transition-transform flex-shrink-0" viewBox="0 0 24 24">
                             <path fill="#00A4EF" d="M11.5 11.5v-11h-11v11h11z"/>
@@ -793,7 +805,9 @@ export default function StreamlinedCreatePage() {
                       </div>
 
                       {/* Expanded Meeting Preview Card */}
-                      <div className="relative bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl p-8 border border-white border-opacity-30 shadow-2xl">
+                      <div className="relative bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border border-white border-opacity-30 shadow-2xl w-full" style={{
+                        minWidth: '400px'
+                      }}>
                         {/* AI-Powered Badge */}
                         <div className="absolute -top-4 -right-4">
                           <div className="bg-gradient-to-r from-pink-500 to-yellow-400 text-white text-sm font-bold px-4 py-2 rounded-full shadow-xl animate-pulse">
