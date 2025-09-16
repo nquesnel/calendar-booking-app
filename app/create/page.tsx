@@ -683,19 +683,16 @@ export default function StreamlinedCreatePage() {
                   <div className="max-w-4xl mx-auto space-y-12">
                     
                     {/* HEADER SECTION - Connect Calendar with AI Badge */}
-                    <div className="text-center space-y-6">
-                      <div className="relative inline-block">
-                        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight flex items-center justify-center space-x-3">
+                    <div className="text-center space-y-6 pb-8 border-b border-white border-opacity-20">
+                      <div className="flex items-center justify-center space-x-4">
+                        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight flex items-center space-x-3">
                           <svg className="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
                           </svg>
                           <span>Connect Your Calendar Instantly</span>
                         </h1>
-                        {/* AI-Powered Badge next to header */}
-                        <div className="absolute -top-2 -right-8">
-                          <div className="bg-gradient-to-r from-pink-500 to-yellow-400 text-white text-sm font-bold px-4 py-2 rounded-full shadow-xl animate-pulse">
-                            ✨ AI-Powered
-                          </div>
+                        <div className="bg-gradient-to-r from-pink-500 to-yellow-400 text-white text-sm font-bold px-4 py-2 rounded-full shadow-xl animate-pulse">
+                          ✨ AI-Powered
                         </div>
                       </div>
                       <p className="text-xl text-white text-opacity-80 font-normal">
@@ -703,10 +700,10 @@ export default function StreamlinedCreatePage() {
                       </p>
                     
                     {/* CALENDAR CONNECTION BUTTONS SECTION */}
-                    <div className="text-center space-y-6">
-                        <div className="relative">
-                          {/* Most Popular Pill - Outside Button */}
-                          <div className="absolute -top-4 -right-4 z-20">
+                    <div className="text-center space-y-6 py-8 border-b border-white border-opacity-20">
+                        <div className="relative inline-block">
+                          {/* Most Popular Pill - Properly Positioned */}
+                          <div className="absolute -top-3 -right-6 z-20">
                             <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                               Most Popular
                             </div>
@@ -753,9 +750,9 @@ export default function StreamlinedCreatePage() {
                           </button>
                         </div>
 
-                        <div className="relative">
-                          {/* Enterprise Pill - Outside Button */}
-                          <div className="absolute -top-4 -right-4 z-20">
+                        <div className="relative inline-block">
+                          {/* Enterprise Pill - Properly Positioned */}
+                          <div className="absolute -top-3 -right-6 z-20">
                             <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                               Enterprise
                             </div>
@@ -802,24 +799,10 @@ export default function StreamlinedCreatePage() {
                         </div>
                       </div>
 
-                      {/* Social Proof */}
-                      <div className="text-center lg:text-left">
-                        <div className="flex items-center justify-center lg:justify-start space-x-3">
-                          <div className="flex -space-x-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full border-2 border-white"></div>
-                            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-full border-2 border-white"></div>
-                            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full border-2 border-white"></div>
-                            <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full border-2 border-white"></div>
-                          </div>
-                          <p className="text-sm text-white text-opacity-70">
-                            Join 10,000+ who never send "when are you free?" emails again
-                          </p>
-                        </div>
-                      </div>
                     </div>
 
                     {/* WHAT HAPPENS NEXT SECTION */}
-                    <div className="text-center space-y-8">
+                    <div className="text-center space-y-8 py-8 border-b border-white border-opacity-20">
                       <h2 className="text-3xl font-bold text-white">What Happens Next</h2>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="flex flex-col items-center space-y-4">
@@ -853,7 +836,7 @@ export default function StreamlinedCreatePage() {
                     </div>
 
                     {/* MEETING PREVIEW SECTION */}
-                    <div className="max-w-2xl mx-auto">
+                    <div className="max-w-2xl mx-auto py-8">
                       <div className="relative bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border border-white border-opacity-30 shadow-2xl">
                         
                         <div className="flex items-center justify-between mb-6">
