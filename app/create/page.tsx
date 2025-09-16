@@ -680,25 +680,30 @@ export default function StreamlinedCreatePage() {
                   maxWidth: '1400px',
                   minWidth: '320px'
                 }}>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-8 lg:gap-16 items-start">
+                  <div className="max-w-4xl mx-auto space-y-12">
                     
-                    {/* LEFT COLUMN - CONNECTION HERO (Full width on desktop) */}
-                    <div className="space-y-10">
-                      {/* Main Headline */}
-                      <div className="text-center lg:text-left">
-                        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-2 flex items-center justify-center lg:justify-start space-x-3">
+                    {/* HEADER SECTION - Connect Calendar with AI Badge */}
+                    <div className="text-center space-y-6">
+                      <div className="relative inline-block">
+                        <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight flex items-center justify-center space-x-3">
                           <svg className="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
                           </svg>
                           <span>Connect Your Calendar Instantly</span>
                         </h1>
-                        <p className="text-xl text-white text-opacity-80 font-normal">
-                          30-second connection, lifetime of effortless meetings
-                        </p>
+                        {/* AI-Powered Badge next to header */}
+                        <div className="absolute -top-2 -right-8">
+                          <div className="bg-gradient-to-r from-pink-500 to-yellow-400 text-white text-sm font-bold px-4 py-2 rounded-full shadow-xl animate-pulse">
+                            ✨ AI-Powered
+                          </div>
+                        </div>
                       </div>
-
-                      {/* Calendar Connection Buttons - With External Pills */}
-                      <div className="space-y-6 flex flex-col items-center lg:items-start">
+                      <p className="text-xl text-white text-opacity-80 font-normal">
+                        30-second connection, lifetime of effortless meetings
+                      </p>
+                    
+                    {/* CALENDAR CONNECTION BUTTONS SECTION */}
+                    <div className="text-center space-y-6">
                         <div className="relative">
                           {/* Most Popular Pill - Outside Button */}
                           <div className="absolute -top-4 -right-4 z-20">
@@ -813,52 +818,43 @@ export default function StreamlinedCreatePage() {
                       </div>
                     </div>
 
-                    {/* RIGHT COLUMN - EXPANDED EXCITEMENT & PREVIEW */}
-                    <div className="space-y-8">
-                      {/* What Happens Next - Expanded */}
-                      <div>
-                        <h2 className="text-3xl font-bold text-white mb-6">What Happens Next</h2>
-                        <div className="space-y-6">
-                          <div className="flex items-center space-x-4 text-white text-opacity-90">
-                            <div className="w-12 h-12 bg-yellow-400 bg-opacity-20 rounded-full flex items-center justify-center">
-                              <span className="text-2xl">✨</span>
-                            </div>
-                            <div>
-                              <div className="text-xl font-semibold text-white">AI finds perfect mutual times instantly</div>
-                              <div className="text-sm text-white text-opacity-70">Advanced calendar analysis in seconds</div>
-                            </div>
+                    {/* WHAT HAPPENS NEXT SECTION */}
+                    <div className="text-center space-y-8">
+                      <h2 className="text-3xl font-bold text-white">What Happens Next</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-xl">
+                            <span className="text-3xl">✨</span>
                           </div>
-                          <div className="flex items-center space-x-4 text-white text-opacity-90">
-                            <div className="w-12 h-12 bg-green-400 bg-opacity-20 rounded-full flex items-center justify-center">
-                              <span className="text-2xl">⚡</span>
-                            </div>
-                            <div>
-                              <div className="text-xl font-semibold text-white">Your recipient books in under 2 minutes</div>
-                              <div className="text-sm text-white text-opacity-70">No back-and-forth coordination needed</div>
-                            </div>
+                          <div className="text-center">
+                            <div className="text-xl font-semibold text-white mb-2">AI finds perfect mutual times instantly</div>
+                            <div className="text-sm text-white text-opacity-70">Advanced calendar analysis in seconds</div>
                           </div>
-                          <div className="flex items-center space-x-4 text-white text-opacity-90">
-                            <div className="w-12 h-12 bg-purple-400 bg-opacity-20 rounded-full flex items-center justify-center">
-                              <span className="text-2xl">🎯</span>
-                            </div>
-                            <div>
-                              <div className="text-xl font-semibold text-white">Zero back-and-forth emails ever again</div>
-                              <div className="text-sm text-white text-opacity-70">Automatic calendar integration for both parties</div>
-                            </div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-xl">
+                            <span className="text-3xl">⚡</span>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-xl font-semibold text-white mb-2">Your recipient books in under 2 minutes</div>
+                            <div className="text-sm text-white text-opacity-70">No back-and-forth coordination needed</div>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-xl">
+                            <span className="text-3xl">🎯</span>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-xl font-semibold text-white mb-2">Zero back-and-forth emails ever again</div>
+                            <div className="text-sm text-white text-opacity-70">Automatic calendar integration for both parties</div>
                           </div>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Expanded Meeting Preview Card */}
-                      <div className="relative bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border border-white border-opacity-30 shadow-2xl w-full" style={{
-                        minWidth: '400px'
-                      }}>
-                        {/* AI-Powered Badge */}
-                        <div className="absolute -top-4 -right-4">
-                          <div className="bg-gradient-to-r from-pink-500 to-yellow-400 text-white text-sm font-bold px-4 py-2 rounded-full shadow-xl animate-pulse">
-                            ✨ AI-Powered
-                          </div>
-                        </div>
+                    {/* MEETING PREVIEW SECTION */}
+                    <div className="max-w-2xl mx-auto">
+                      <div className="relative bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border border-white border-opacity-30 shadow-2xl">
                         
                         <div className="flex items-center justify-between mb-6">
                           <h3 className="text-2xl font-bold text-white">Meeting Preview</h3>
