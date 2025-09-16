@@ -242,38 +242,38 @@ export default function StreamlinedCreatePage() {
         </div>
       </nav>
 
-      <div className="container-width py-8">
-        <div className="max-w-2xl mx-auto">
+      <div className="w-full py-8">
+        <div className={`${step === 1 ? 'max-w-2xl mx-auto px-8' : 'w-full'}`}>
           <div className="mb-8">
-            {/* Progress Indicator */}
-            <div className="flex items-center justify-center mb-6">
-              <div className="flex items-center space-x-4">
-                <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-blue-600' : 'text-slate-400'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step >= 1 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
-                  }`}>
-                    1
+            {step === 1 && (
+              <div>
+                {/* Progress Indicator */}
+                <div className="flex items-center justify-center mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-blue-600' : 'text-slate-400'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                        step >= 1 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
+                      }`}>
+                        1
+                      </div>
+                      <span className="font-medium">Create Meeting</span>
+                    </div>
+                    <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`}></div>
+                    <div className={`flex items-center space-x-2 ${step >= 2 ? 'text-blue-600' : 'text-slate-400'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                        step >= 2 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
+                      }`}>
+                        2
+                      </div>
+                      <span className="font-medium">Link Calendar</span>
+                    </div>
                   </div>
-                  <span className="font-medium">Create Meeting</span>
                 </div>
-                <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`}></div>
-                <div className={`flex items-center space-x-2 ${step >= 2 ? 'text-blue-600' : 'text-slate-400'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step >= 2 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
-                  }`}>
-                    2
-                  </div>
-                  <span className="font-medium">Link Calendar</span>
-                </div>
+                
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">Create Meeting Request</h1>
+                <p className="text-slate-600">Set up your meeting details</p>
               </div>
-            </div>
-            
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">
-              {step === 1 ? 'Create Meeting Request' : 'Connect Your Calendar'}
-            </h1>
-            <p className="text-slate-600">
-              {step === 1 ? 'Set up your meeting details' : 'Quick 30-second setup to send your invite'}
-            </p>
+            )}
           </div>
 
           {!showSuccess ? (
