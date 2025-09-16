@@ -697,34 +697,36 @@ export default function StreamlinedCreatePage() {
                         </p>
                       </div>
 
-                      {/* Calendar Connection Buttons - Exact Specifications */}
-                      <div className="space-y-4 flex flex-col items-center lg:items-start">
-                        <button
-                          onClick={() => window.location.href = '/api/auth/google/creator'}
-                          className="group relative overflow-hidden rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-6 min-h-[80px] border border-white border-opacity-20"
-                          style={{
-                            width: '100%',
-                            maxWidth: '450px',
-                            background: 'linear-gradient(145deg, rgba(248,249,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
-                            backdropFilter: 'blur(10px)',
-                            boxShadow: '0 8px 32px rgba(66,133,244,0.25), inset 0 1px 0 rgba(255,255,255,0.6)',
-                            transform: 'translateY(0)',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-3px) scale(1.01)'
-                            e.currentTarget.style.boxShadow = '0 20px 60px rgba(66,133,244,0.4), 0 0 0 1px rgba(66,133,244,0.3), inset 0 1px 0 rgba(255,255,255,0.8)'
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                            e.currentTarget.style.boxShadow = '0 8px 32px rgba(66,133,244,0.25), inset 0 1px 0 rgba(255,255,255,0.6)'
-                          }}
-                        >
-                          {/* Most Popular Pill */}
-                          <div className="absolute -top-3 -right-3">
+                      {/* Calendar Connection Buttons - With External Pills */}
+                      <div className="space-y-6 flex flex-col items-center lg:items-start">
+                        <div className="relative">
+                          {/* Most Popular Pill - Outside Button */}
+                          <div className="absolute -top-4 -right-4 z-20">
                             <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                               Most Popular
                             </div>
                           </div>
+                          
+                          <button
+                            onClick={() => window.location.href = '/api/auth/google/creator'}
+                            className="group relative overflow-hidden rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-6 min-h-[80px] border border-white border-opacity-20"
+                            style={{
+                              width: '100%',
+                              maxWidth: '450px',
+                              background: 'linear-gradient(145deg, rgba(248,249,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 8px 32px rgba(66,133,244,0.25), inset 0 1px 0 rgba(255,255,255,0.6)',
+                              transform: 'translateY(0)',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-3px) scale(1.01)'
+                              e.currentTarget.style.boxShadow = '0 20px 60px rgba(66,133,244,0.4), 0 0 0 1px rgba(66,133,244,0.3), inset 0 1px 0 rgba(255,255,255,0.8)'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                              e.currentTarget.style.boxShadow = '0 8px 32px rgba(66,133,244,0.25), inset 0 1px 0 rgba(255,255,255,0.6)'
+                            }}
+                          >
                           
                           {/* Subtle gradient overlay */}
                           <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-transparent opacity-30 rounded-3xl"></div>
@@ -743,53 +745,56 @@ export default function StreamlinedCreatePage() {
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                             </svg>
                           </div>
-                        </button>
+                          </button>
+                        </div>
 
-                        <button
-                          onClick={() => window.location.href = '/api/auth/microsoft/creator'}
-                          className="group relative overflow-hidden rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-6 min-h-[80px] border border-white border-opacity-20"
-                          style={{
-                            width: '100%',
-                            maxWidth: '450px',
-                            background: 'linear-gradient(145deg, rgba(255,248,248,0.95) 0%, rgba(255,255,255,0.9) 100%)',
-                            backdropFilter: 'blur(10px)',
-                            boxShadow: '0 8px 32px rgba(255,120,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6)',
-                            transform: 'translateY(0)',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-3px) scale(1.01)'
-                            e.currentTarget.style.boxShadow = '0 20px 60px rgba(255,120,0,0.4), 0 0 0 1px rgba(255,120,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8)'
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                            e.currentTarget.style.boxShadow = '0 8px 32px rgba(255,120,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6)'
-                          }}
-                        >
-                          {/* Enterprise Pill */}
-                          <div className="absolute -top-3 -right-3">
+                        <div className="relative">
+                          {/* Enterprise Pill - Outside Button */}
+                          <div className="absolute -top-4 -right-4 z-20">
                             <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                               Enterprise
                             </div>
                           </div>
                           
-                          {/* Subtle gradient overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent opacity-30 rounded-3xl"></div>
-                          
-                          <svg className="w-10 h-10 group-hover:scale-110 transition-transform flex-shrink-0 relative z-10 drop-shadow-sm" viewBox="0 0 24 24">
-                            <path fill="#00A4EF" d="M11.5 11.5v-11h-11v11h11z"/>
-                            <path fill="#FFB900" d="M24 11.5v-11h-11v11h11z"/>
-                            <path fill="#00D924" d="M11.5 24v-11h-11v11h11z"/>
-                            <path fill="#FF3E00" d="M24 24v-11h-11v11h11z"/>
-                          </svg>
-                          <div className="text-left flex-1 relative z-10">
-                            <div className="text-xl lg:text-2xl font-bold text-slate-900">Microsoft Outlook</div>
-                          </div>
-                          <div className="text-orange-500 group-hover:translate-x-2 group-hover:text-orange-600 transition-all duration-300 relative z-10">
-                            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          <button
+                            onClick={() => window.location.href = '/api/auth/microsoft/creator'}
+                            className="group relative overflow-hidden rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-6 min-h-[80px] border border-white border-opacity-20"
+                            style={{
+                              width: '100%',
+                              maxWidth: '450px',
+                              background: 'linear-gradient(145deg, rgba(255,248,248,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 8px 32px rgba(255,120,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6)',
+                              transform: 'translateY(0)',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-3px) scale(1.01)'
+                              e.currentTarget.style.boxShadow = '0 20px 60px rgba(255,120,0,0.4), 0 0 0 1px rgba(255,120,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8)'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                              e.currentTarget.style.boxShadow = '0 8px 32px rgba(255,120,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6)'
+                            }}
+                          >
+                            {/* Subtle gradient overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent opacity-30 rounded-3xl"></div>
+                            
+                            <svg className="w-10 h-10 group-hover:scale-110 transition-transform flex-shrink-0 relative z-10 drop-shadow-sm" viewBox="0 0 24 24">
+                              <path fill="#00A4EF" d="M11.5 11.5v-11h-11v11h11z"/>
+                              <path fill="#FFB900" d="M24 11.5v-11h-11v11h11z"/>
+                              <path fill="#00D924" d="M11.5 24v-11h-11v11h11z"/>
+                              <path fill="#FF3E00" d="M24 24v-11h-11v11h11z"/>
                             </svg>
-                          </div>
-                        </button>
+                            <div className="text-left flex-1 relative z-10">
+                              <div className="text-xl lg:text-2xl font-bold text-slate-900">Microsoft Outlook</div>
+                            </div>
+                            <div className="text-orange-500 group-hover:translate-x-2 group-hover:text-orange-600 transition-all duration-300 relative z-10">
+                              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                              </svg>
+                            </div>
+                          </button>
+                        </div>
                       </div>
 
                       {/* Social Proof */}
