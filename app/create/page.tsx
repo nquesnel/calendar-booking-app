@@ -675,11 +675,11 @@ export default function StreamlinedCreatePage() {
                 <div className="absolute bottom-32 right-16 w-32 h-32 bg-blue-300 bg-opacity-20 rounded-full blur-2xl animate-pulse"></div>
                 <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-purple-400 bg-opacity-15 rounded-full blur-lg animate-bounce" style={{animationDelay: '2s'}}></div>
                 
-                <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-12 py-12 sm:py-20">
-                  <div className="grid lg:grid-cols-3 xl:grid-cols-7 gap-8 lg:gap-16">
+                <div className="relative z-10 w-full px-8 sm:px-16 lg:px-24 py-12 sm:py-20">
+                  <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 max-w-none">
                     
-                    {/* LEFT COLUMN - CONNECTION HERO (Expanded for desktop) */}
-                    <div className="lg:col-span-2 xl:col-span-4 space-y-10">
+                    {/* LEFT COLUMN - CONNECTION HERO (Full width on desktop) */}
+                    <div className="space-y-10">
                       {/* Main Headline */}
                       <div className="text-center lg:text-left">
                         <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-2 flex items-center justify-center lg:justify-start space-x-3">
@@ -757,7 +757,7 @@ export default function StreamlinedCreatePage() {
                     </div>
 
                     {/* RIGHT COLUMN - EXPANDED EXCITEMENT & PREVIEW */}
-                    <div className="lg:col-span-1 xl:col-span-3 space-y-8">
+                    <div className="space-y-8">
                       {/* What Happens Next - Expanded */}
                       <div>
                         <h2 className="text-3xl font-bold text-white mb-6">What Happens Next</h2>
