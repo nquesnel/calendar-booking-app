@@ -70,11 +70,17 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ token: string }> }
 ) {
+  console.log(`🔍 PUT handler starting...`)
   try {
+    console.log(`🔍 Getting token from params...`)
     const { token } = await params
     console.log(`🔍 PUT /api/bookings/${token} - Request received`)
+    
+    console.log(`🔍 Parsing request body...`)
     const body = await req.json()
     console.log(`📝 PUT body:`, body)
+    
+    console.log(`🔍 Initializing Prisma client...`)
     
     const {
       title,
@@ -97,9 +103,11 @@ export async function PUT(
     }
     
     // Find the existing booking
+    console.log(`🔍 Looking up booking with token: ${token}`)
     const existingBooking = await prisma.booking.findUnique({
       where: { shareToken: token }
     })
+    console.log(`📋 Found booking:`, existingBooking ? 'YES' : 'NO')
     
     if (!existingBooking) {
       return NextResponse.json(
