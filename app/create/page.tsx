@@ -680,7 +680,7 @@ export default function StreamlinedCreatePage() {
                   maxWidth: '1400px',
                   minWidth: '320px'
                 }}>
-                  <div className="max-w-4xl mx-auto space-y-12">
+                  <div className="max-w-4xl mx-auto space-y-8">
                     
                     {/* HEADER SECTION - Connect Calendar with AI Badge */}
                     <div className="text-center space-y-6 pb-8 border-b border-white border-opacity-20">
@@ -700,7 +700,7 @@ export default function StreamlinedCreatePage() {
                       </p>
                     
                     {/* CALENDAR CONNECTION BUTTONS SECTION */}
-                    <div className="text-center space-y-6 py-8 border-b border-white border-opacity-20">
+                    <div className="text-center space-y-8 py-8 border-b border-white border-opacity-20">
                         <div className="relative inline-block">
                           {/* Most Popular Pill - Properly Positioned */}
                           <div className="absolute -top-3 -right-6 z-20">
