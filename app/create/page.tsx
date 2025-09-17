@@ -209,16 +209,14 @@ export default function CleanCreatePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Navigation - Only show on Step 1 */}
-      {step === 1 && (
-        <nav className="bg-white border-b border-slate-200 px-4 py-3">
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <Link href="/" className="text-xl font-bold text-slate-900">
-              Syncthesis
-            </Link>
-          </div>
-        </nav>
-      )}
+      {/* Navigation */}
+      <nav className={`${step === 1 ? 'bg-white border-b border-slate-200' : 'bg-transparent'} px-4 py-3 relative z-50`}>
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Link href="/" className={`text-xl font-bold ${step === 1 ? 'text-slate-900' : 'text-white'}`}>
+            Syncthesis
+          </Link>
+        </div>
+      </nav>
 
       {!showSuccess ? (
         step === 1 ? (
@@ -448,7 +446,7 @@ export default function CleanCreatePage() {
                   </div>
                   <button
                     onClick={() => window.location.href = '/api/auth/google/creator'}
-                    className="group relative bg-white bg-opacity-95 backdrop-blur-lg rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-4 border border-white border-opacity-20 w-80"
+                    className="group relative bg-white bg-opacity-95 backdrop-blur-lg rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-4 border border-white border-opacity-20 w-80 min-w-[340px]"
                     style={{
                       transform: 'translateY(0)',
                       boxShadow: '0 10px 30px rgba(66,133,244,0.3)'
@@ -485,7 +483,7 @@ export default function CleanCreatePage() {
                   </div>
                   <button
                     onClick={() => window.location.href = '/api/auth/microsoft/creator'}
-                    className="group relative bg-white bg-opacity-95 backdrop-blur-lg rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-4 border border-white border-opacity-20 w-80"
+                    className="group relative bg-white bg-opacity-95 backdrop-blur-lg rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center space-x-4 border border-white border-opacity-20 w-80 min-w-[340px]"
                     style={{
                       transform: 'translateY(0)',
                       boxShadow: '0 10px 30px rgba(255,120,0,0.3)'
