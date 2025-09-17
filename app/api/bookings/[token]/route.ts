@@ -71,18 +71,6 @@ export async function PUT(
   { params }: { params: Promise<{ token: string }> }
 ) {
   console.log(`🔍 PUT handler starting...`)
-  
-  // Test basic functionality first
-  try {
-    console.log(`🔍 Testing basic response...`)
-    return NextResponse.json({ test: 'API handler reachable', timestamp: Date.now() })
-  } catch (basicError) {
-    console.error(`💥 Basic response failed:`, basicError)
-    return NextResponse.json({ error: 'Basic handler failure' }, { status: 500 })
-  }
-
-  // Original logic (temporarily disabled for testing)
-  /*
   try {
     console.log(`🔍 Getting token from params...`)
     const { token } = await params
@@ -257,7 +245,6 @@ export async function PUT(
       { status: 500 }
     )
   }
-  */
 }
 
 export async function DELETE(
