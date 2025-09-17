@@ -922,7 +922,7 @@ export default function BookingPage() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-xl font-semibold mb-4">🚀 AI-Suggested Meeting Times</h2>
+                  <h2 className="text-xl font-semibold mb-4">Suggested Meeting Times</h2>
                   <div className="bg-blue-50 rounded-lg p-4 mb-6">
                     <p className="text-blue-800 text-sm">
                       <strong>Syncthesis Magic:</strong> Our AI analyzed both your calendar and {booking.creatorName}'s calendar 
@@ -964,11 +964,6 @@ export default function BookingPage() {
                               Duration: {booking.duration} minutes
                             </div>
                             
-                            {suggestion.reasoning && (
-                              <div className="text-xs text-slate-500 bg-slate-50 rounded px-2 py-1">
-                                💡 {suggestion.reasoning}
-                              </div>
-                            )}
                           </div>
                           
                           <div className="text-right ml-4">
