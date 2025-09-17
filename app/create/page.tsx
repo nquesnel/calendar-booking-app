@@ -59,10 +59,14 @@ export default function CleanCreatePage() {
 
   const processPendingMeeting = async () => {
     try {
+      // Set loading immediately to prevent form flash
+      setLoading(true)
+      
       const pendingData = sessionStorage.getItem('pendingMeeting')
       if (!pendingData) {
         alert('Meeting session expired. Please create your meeting again.')
         setStep(1)
+        setLoading(false)
         return
       }
 
@@ -73,6 +77,7 @@ export default function CleanCreatePage() {
         sessionStorage.removeItem('pendingMeeting')
         alert('Meeting session expired. Please create your meeting again.')
         setStep(1)
+        setLoading(false)
         return
       }
 
@@ -83,6 +88,7 @@ export default function CleanCreatePage() {
       console.error('Error processing pending meeting:', error)
       alert('Error processing meeting. Please try again.')
       setStep(1)
+      setLoading(false)
     }
   }
 
@@ -218,7 +224,16 @@ export default function CleanCreatePage() {
         </div>
       </nav>
 
-      {!showSuccess ? (
+      {loading && step === 2 ? (
+        /* Processing OAuth Callback */
+        <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-600 to-blue-700 flex items-center justify-center">
+          <div className="text-center text-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold mb-2">Creating Your Meeting...</h2>
+            <p className="text-white text-opacity-80">Processing your calendar connection and sending the invite</p>
+          </div>
+        </div>
+      ) : !showSuccess ? (
         step === 1 ? (
           /* STEP 1: Meeting Details */
           <div className="bg-slate-50 py-12">
