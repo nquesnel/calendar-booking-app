@@ -210,9 +210,9 @@ export default function CleanCreatePage() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className={`${step === 1 ? 'bg-white border-b border-slate-200' : 'bg-transparent'} px-4 py-3 relative z-50`}>
+      <nav className={`${step === 1 ? 'bg-white border-b border-slate-200' : 'bg-white bg-opacity-90 backdrop-blur-sm'} px-4 py-3 relative z-50`}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href="/" className={`text-xl font-bold ${step === 1 ? 'text-slate-900' : 'text-white'}`}>
+          <Link href="/" className={`text-xl font-bold ${step === 1 ? 'text-slate-900' : 'text-slate-900'}`}>
             Syncthesis
           </Link>
         </div>
