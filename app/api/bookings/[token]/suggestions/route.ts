@@ -304,9 +304,7 @@ export async function GET(
 
     console.log('🎯 Using Smart AI Scheduler with preferences:', organizerPrefs)
 
-    // Count total busy slots (conflicts to avoid)
-    const totalBusySlots = creatorBusySlots.length + 
-      Object.values(recipientBusySlotsMap).reduce((total, slots) => total + slots.length, 0)
+    // Use existing totalBusySlots for conflict counting
     conflictsAvoided = totalBusySlots
 
     const suggestions = await getSmartSuggestions(
