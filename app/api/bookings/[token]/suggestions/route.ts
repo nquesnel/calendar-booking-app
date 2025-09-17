@@ -10,6 +10,9 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ token: string }> }
 ) {
+  const startTime = Date.now() // Start timing analysis
+  let conflictsAvoided = 0
+  
   try {
     const { token } = await params
     console.log(`🔍 Suggestions API called for token: ${token}`)
@@ -301,6 +304,11 @@ export async function GET(
 
     console.log('🎯 Using Smart AI Scheduler with preferences:', organizerPrefs)
 
+    // Count total busy slots (conflicts to avoid)
+    const totalBusySlots = creatorBusySlots.length + 
+      Object.values(recipientBusySlotsMap).reduce((total, slots) => total + slots.length, 0)
+    conflictsAvoided = totalBusySlots
+
     const suggestions = await getSmartSuggestions(
       booking.creatorEmail,
       recipientEmails,
@@ -335,8 +343,16 @@ export async function GET(
       isBestMatch: suggestions[index]?.isBestMatch || false
     }))
 
+    // Calculate analysis timing
+    const analysisTime = (Date.now() - startTime) / 1000 // Convert to seconds
+    
     return NextResponse.json({
-      suggestions: enhancedSuggestions
+      suggestions: enhancedSuggestions,
+      analytics: {
+        analysisTime: analysisTime.toFixed(1), // e.g., "0.3"
+        conflictsAvoided: conflictsAvoided,
+        calendarsAnalyzed: 1 + recipientEmails.length
+      }
     })
   } catch (error) {
     console.error('💥 Error generating suggestions:', error)

@@ -49,6 +49,7 @@ export default function BookingPage() {
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [analytics, setAnalytics] = useState<{analysisTime: string, conflictsAvoided: number, calendarsAnalyzed: number} | null>(null)
   const [calendarConnected, setCalendarConnected] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [recipientInfo, setRecipientInfo] = useState({ name: '', email: '' })
@@ -153,6 +154,9 @@ export default function BookingPage() {
       
       if (data.suggestions) {
         setSuggestions(data.suggestions)
+        if (data.analytics) {
+          setAnalytics(data.analytics)
+        }
       } else if (data.error) {
         setSuggestionsError(data.error)
       }
@@ -932,8 +936,12 @@ export default function BookingPage() {
                           <span className="text-xl">🤖</span>
                         </div>
                         <div className="text-left">
-                          <p className="text-green-800 font-semibold">Analysis completed in 0.3 seconds</p>
-                          <p className="text-green-700 text-sm">Analyzed both calendars • Found optimal mutual times • Avoided 12 conflicts</p>
+                          <p className="text-green-800 font-semibold">
+                            Analysis completed in {analytics?.analysisTime || '0.3'} seconds
+                          </p>
+                          <p className="text-green-700 text-sm">
+                            Analyzed {analytics?.calendarsAnalyzed || 2} calendars • Found optimal mutual times • Avoided {analytics?.conflictsAvoided || 0} conflicts
+                          </p>
                         </div>
                       </div>
                       <p className="text-green-800 text-center font-medium">
