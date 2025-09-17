@@ -433,7 +433,7 @@ export default function CleanCreatePage() {
                     ✨ AI-Powered
                   </div>
                 </div>
-                <p className="text-xl text-white text-opacity-80">30-second connection, lifetime of effortless meetings</p>
+                <p className="text-xl text-white text-opacity-80">15-second connection, lifetime of effortless meetings</p>
               </div>
 
               {/* Calendar Buttons - Side by Side */}
