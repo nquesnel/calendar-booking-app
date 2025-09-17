@@ -705,7 +705,7 @@ export default function StreamlinedCreatePage() {
                           {/* Most Popular Pill - Properly Positioned */}
                           <div className="absolute -top-3 -right-6 z-20">
                             <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                              Most Popular
+                              Connect in less than 15 seconds
                             </div>
                           </div>
                           
@@ -754,7 +754,7 @@ export default function StreamlinedCreatePage() {
                           {/* Enterprise Pill - Properly Positioned */}
                           <div className="absolute -top-3 -right-6 z-20">
                             <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                              Enterprise
+                              Enterprise-ready
                             </div>
                           </div>
                           
@@ -801,42 +801,65 @@ export default function StreamlinedCreatePage() {
 
                     </div>
 
-                    {/* WHAT HAPPENS NEXT SECTION */}
-                    <div className="text-center space-y-8 py-8 border-b border-white border-opacity-20">
-                      <h2 className="text-3xl font-bold text-white">What Happens Next</h2>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="flex flex-col items-center space-y-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-xl">
-                            <span className="text-3xl">✨</span>
+                    {/* BOTTOM SECTION: 75/25 SPLIT */}
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-8">
+                      
+                      {/* LEFT: FROM INVITE TO BOOKED (75% width) */}
+                      <div className="lg:col-span-3 space-y-8">
+                        <h2 className="text-3xl font-bold text-white text-center lg:text-left">From Invite to Booked in Minutes</h2>
+                        
+                        <div className="space-y-8">
+                          {/* Step 1 */}
+                          <div className="flex items-start space-x-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-xl flex-shrink-0">
+                              <span className="text-3xl">📧</span>
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-xl font-semibold text-white mb-2">Your invite is sent instantly</div>
+                              <div className="text-base text-white text-opacity-80">Recipient gets personalized meeting request with smart booking link</div>
+                            </div>
                           </div>
-                          <div className="text-center">
-                            <div className="text-xl font-semibold text-white mb-2">AI finds perfect mutual times instantly</div>
-                            <div className="text-sm text-white text-opacity-70">Advanced calendar analysis in seconds</div>
+                          
+                          {/* Down Arrow */}
+                          <div className="flex justify-center">
+                            <svg className="w-6 h-6 text-white text-opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
                           </div>
-                        </div>
-                        <div className="flex flex-col items-center space-y-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-xl">
-                            <span className="text-3xl">⚡</span>
+
+                          {/* Step 2 */}
+                          <div className="flex items-start space-x-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-xl flex-shrink-0">
+                              <span className="text-3xl">🤖</span>
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-xl font-semibold text-white mb-2">They connect & AI analyzes</div>
+                              <div className="text-base text-white text-opacity-80">20 second calendar connection, then Syncthesis finds optimal mutual times</div>
+                            </div>
                           </div>
-                          <div className="text-center">
-                            <div className="text-xl font-semibold text-white mb-2">Your recipient books in under 2 minutes</div>
-                            <div className="text-sm text-white text-opacity-70">No back-and-forth coordination needed</div>
+                          
+                          {/* Down Arrow */}
+                          <div className="flex justify-center">
+                            <svg className="w-6 h-6 text-white text-opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
                           </div>
-                        </div>
-                        <div className="flex flex-col items-center space-y-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-xl">
-                            <span className="text-3xl">🎯</span>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-xl font-semibold text-white mb-2">Zero back-and-forth emails ever again</div>
-                            <div className="text-sm text-white text-opacity-70">Automatic calendar integration for both parties</div>
+
+                          {/* Step 3 */}
+                          <div className="flex items-start space-x-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center shadow-xl flex-shrink-0">
+                              <span className="text-3xl">✅</span>
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-xl font-semibold text-white mb-2">They pick, you're both booked</div>
+                              <div className="text-base text-white text-opacity-80">3 perfect time options, instant confirmation for both calendars</div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* MEETING PREVIEW SECTION */}
-                    <div className="max-w-2xl mx-auto py-8">
+                      {/* RIGHT: MEETING PREVIEW (25% width) */}
+                      <div className="lg:col-span-1">
                       <div className="relative bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border border-white border-opacity-30 shadow-2xl">
                         
                         <div className="flex items-center justify-between mb-6">
