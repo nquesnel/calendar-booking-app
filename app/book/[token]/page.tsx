@@ -981,18 +981,17 @@ export default function BookingPage() {
                                   ⭐ Best Match
                                 </span>
                               )}
+                              {suggestion.score > 0.85 && !suggestion.isBestMatch && (
+                                <span className="text-sm bg-gradient-to-r from-green-400 to-emerald-500 text-white px-3 py-1 rounded-full font-bold shadow-md">
+                                  ✨ Great Option
+                                </span>
+                              )}
                             </div>
                             
                             {suggestion.contextLabel && (
                               <div className="text-sm text-blue-600 font-medium mb-1">
                                 {suggestion.contextLabel.replace('⭐ Best Match - ', '')}
                               </div>
-                            )}
-                            
-                            {suggestion.score > 0.85 && !suggestion.isBestMatch && (
-                              <span className="text-sm bg-gradient-to-r from-green-400 to-emerald-500 text-white px-3 py-1 rounded-full font-bold shadow-md">
-                                ✨ Great Option
-                              </span>
                             )}
                             
                             <div className="text-base text-slate-600 mt-2">

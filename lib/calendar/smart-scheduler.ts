@@ -488,5 +488,13 @@ function rebalanceTimeDistribution(allSlots: SmartTimeSlot[], currentSuggestions
     best.contextLabel = '⭐ Best Match - ' + best.contextLabel.replace('⭐ Best Match - ', '')
   }
   
-  return suggestions.slice(0, 5)
+  return suggestions
+    .sort((a, b) => {
+      // First sort by score (highest first), then by date (earliest first) for ties
+      if (Math.abs(a.score - b.score) < 0.1) {
+        return a.start.getTime() - b.start.getTime()
+      }
+      return b.score - a.score
+    })
+    .slice(0, 5)
 }
