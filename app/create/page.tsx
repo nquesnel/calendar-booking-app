@@ -696,7 +696,7 @@ export default function StreamlinedCreatePage() {
                         </div>
                       </div>
                       <p className="text-xl text-white text-opacity-80 font-normal">
-                        30-second connection, lifetime of effortless meetings
+                        ⚡ 30-second connection, lifetime of effortless meetings ⚡
                       </p>
                     
                     {/* CALENDAR CONNECTION BUTTONS SECTION */}
