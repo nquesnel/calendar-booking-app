@@ -40,7 +40,7 @@ export default function LoginPage() {
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center space-x-2 mb-8">
             <Calendar className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold">CalendarSync</span>
+            <span className="text-2xl font-bold">Syncthesis</span>
           </Link>
           
           <h2 className="text-3xl font-bold text-slate-900 mb-2">

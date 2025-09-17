@@ -142,7 +142,7 @@ export default function PersonalBookingPage() {
           <h2 className="text-2xl font-bold mb-4">User Not Found</h2>
           <p className="text-slate-600 mb-6">The booking link "{username}" doesn't exist or is no longer available.</p>
           <Link href="/" className="btn-primary">
-            Go to CalendarSync
+            Go to Syncthesis
           </Link>
         </div>
       </div>
@@ -156,7 +156,7 @@ export default function PersonalBookingPage() {
         <div className="container-width py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-semibold">CalendarSync</span>
+            <span className="text-xl font-semibold">Syncthesis</span>
           </Link>
           <Link href="/" className="btn-secondary flex items-center">
             <ArrowLeft className="h-4 w-4 mr-1" />
@@ -221,10 +221,10 @@ export default function PersonalBookingPage() {
             ))}
           </div>
 
-          {/* Powered by CalendarSync */}
+          {/* Powered by Syncthesis */}
           <div className="text-center mt-12 pt-8 border-t border-slate-200">
             <p className="text-slate-500 text-sm mb-4">
-              Powered by CalendarSync - Effortless scheduling
+              Powered by Syncthesis - Effortless scheduling
             </p>
             <Link href="/" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
               Create your own booking link →

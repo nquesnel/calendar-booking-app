@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CalendarSync - Effortless Meeting Scheduling",
+  title: "Syncthesis - Effortless Meeting Scheduling",
   description: "End the back-and-forth of scheduling. Connect calendars instantly and find the perfect meeting time in seconds.",
   keywords: "calendar scheduling, meeting scheduler, calendar sync, appointment booking",
   openGraph: {
-    title: "CalendarSync - Effortless Meeting Scheduling",
+    title: "Syncthesis - Effortless Meeting Scheduling",
     description: "End the back-and-forth of scheduling. Connect calendars instantly.",
     type: "website",
   },

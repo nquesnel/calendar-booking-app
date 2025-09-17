@@ -672,7 +672,7 @@ export default function Dashboard() {
         <div className="container-width py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-semibold">CalendarSync</span>
+            <span className="text-xl font-semibold">Syncthesis</span>
           </Link>
           <div className="flex items-center space-x-3">
             <Link href="/create" className="btn-primary flex items-center whitespace-nowrap">

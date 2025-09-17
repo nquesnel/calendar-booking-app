@@ -23,7 +23,7 @@ export default function ProfilePage() {
         <div className="bg-white rounded-lg border border-slate-200 p-8">
           <div className="flex items-center justify-center space-x-2 mb-6">
             <Calendar className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-semibold">CalendarSync</span>
+            <span className="text-2xl font-semibold">Syncthesis</span>
           </div>
           
           <div className="mb-6">

@@ -515,7 +515,7 @@ export default function BookingPage() {
         <div className="container-width py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-semibold">CalendarSync</span>
+            <span className="text-xl font-semibold">Syncthesis</span>
           </Link>
           <div className="flex items-center space-x-3">
             {isLoggedIn && (
@@ -832,7 +832,7 @@ export default function BookingPage() {
               </div>
 
               <div className="bg-blue-50 rounded-lg p-6 mb-6">
-                <h3 className="text-lg font-semibold mb-2 text-blue-800">🚀 CalendarSync Magic</h3>
+                <h3 className="text-lg font-semibold mb-2 text-blue-800">🚀 Syncthesis Magic</h3>
                 <p className="text-blue-700 text-sm mb-3">
                   Our AI will analyze both your calendar and {booking.creatorName}'s calendar to find 
                   perfect meeting times that work for everyone.
@@ -925,7 +925,7 @@ export default function BookingPage() {
                   <h2 className="text-xl font-semibold mb-4">🚀 AI-Suggested Meeting Times</h2>
                   <div className="bg-blue-50 rounded-lg p-4 mb-6">
                     <p className="text-blue-800 text-sm">
-                      <strong>CalendarSync Magic:</strong> Our AI analyzed both your calendar and {booking.creatorName}'s calendar 
+                      <strong>Syncthesis Magic:</strong> Our AI analyzed both your calendar and {booking.creatorName}'s calendar 
                       to find these optimal mutual times. Each suggestion includes buffer time and avoids scheduling conflicts.
                     </p>
                   </div>
@@ -1034,7 +1034,7 @@ export default function BookingPage() {
 
               <div className="bg-blue-50 rounded-lg p-4 mb-6">
                 <p className="text-blue-800 text-sm">
-                  <strong>✨ CalendarSync Success:</strong> Your meeting was automatically added to both calendars 
+                  <strong>✨ Syncthesis Success:</strong> Your meeting was automatically added to both calendars 
                   with optimal timing that respects both your schedules. No back-and-forth needed!
                 </p>
               </div>

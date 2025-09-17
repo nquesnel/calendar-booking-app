@@ -19,7 +19,7 @@ interface EmailTemplate {
 export async function sendEmail({ to, subject, html }: EmailTemplate) {
   try {
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || 'CalendarSync <noreply@calendarsync.app>',
+      from: process.env.SMTP_FROM || 'Syncthesis <noreply@calendarsync.app>',
       to,
       subject,
       html,
@@ -97,7 +97,7 @@ export function getGroupMeetingInviteEmail(
             <p style="color: #64748b; font-size: 14px;">Once everyone connects, ${organizerName} will select the optimal time for the group.</p>
           </div>
           <div class="footer">
-            <p>Powered by CalendarSync - Seamless group coordination</p>
+            <p>Powered by Syncthesis - Seamless group coordination</p>
           </div>
         </div>
       </body>
@@ -149,7 +149,7 @@ export function getOrganizerReadyToScheduleEmail(
             <p style="color: #64748b; font-size: 14px;">Once you select a time, all participants will receive calendar invitations automatically.</p>
           </div>
           <div class="footer">
-            <p>Powered by CalendarSync - Effortless group scheduling</p>
+            <p>Powered by Syncthesis - Effortless group scheduling</p>
           </div>
         </div>
       </body>
@@ -204,7 +204,7 @@ export function getDeadlineReminderEmail(
             </div>
           </div>
           <div class="footer">
-            <p>Powered by CalendarSync - Don't miss out on group coordination</p>
+            <p>Powered by Syncthesis - Don't miss out on group coordination</p>
           </div>
         </div>
       </body>
@@ -251,7 +251,7 @@ export function getBookingInviteEmail(
             <p style="color: #64748b; font-size: 14px;">This link will let you securely connect your calendar and view available times.</p>
           </div>
           <div class="footer">
-            <p>Powered by CalendarSync - No back-and-forth scheduling</p>
+            <p>Powered by Syncthesis - No back-and-forth scheduling</p>
           </div>
         </div>
       </body>
@@ -296,7 +296,7 @@ export function getBookingConfirmationEmail(
             <p>The meeting has been automatically added to both calendars. You'll receive a calendar invitation shortly.</p>
           </div>
           <div class="footer">
-            <p>Powered by CalendarSync - No back-and-forth scheduling</p>
+            <p>Powered by Syncthesis - No back-and-forth scheduling</p>
           </div>
         </div>
       </body>
@@ -367,7 +367,7 @@ export function getAddedToMeetingEmail(
             <p style="color: #64748b; font-size: 14px;">If you need to make changes or can't attend, please contact ${organizerName} directly.</p>
           </div>
           <div class="footer">
-            <p>Powered by CalendarSync - Seamless meeting coordination</p>
+            <p>Powered by Syncthesis - Seamless meeting coordination</p>
           </div>
         </div>
       </body>
@@ -435,7 +435,7 @@ export function getFollowUpEmail(
             </div>
           </div>
           <div class="footer">
-            <p>Powered by CalendarSync - Professional scheduling made simple</p>
+            <p>Powered by Syncthesis - Professional scheduling made simple</p>
           </div>
         </div>
       </body>

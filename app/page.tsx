@@ -71,7 +71,7 @@ export default function LandingPage() {
         'Priority time suggestions',
         'Calendar analytics',
         'Priority support',
-        'Remove CalendarSync branding'
+        'Remove Syncthesis branding'
       ],
       cta: 'Start Pro Trial',
       highlighted: true
@@ -100,7 +100,7 @@ export default function LandingPage() {
         <div className="container-width py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-semibold">CalendarSync</span>
+            <span className="text-xl font-semibold">Syncthesis</span>
           </div>
           <div className="flex items-center space-x-3">
             {isLoggedIn ? (
@@ -340,7 +340,7 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <Calendar className="h-5 w-5 text-blue-600" />
-              <span className="font-semibold">CalendarSync</span>
+              <span className="font-semibold">Syncthesis</span>
             </div>
             <div className="flex space-x-6 text-sm text-slate-600">
               <Link href="/privacy" className="hover:text-slate-900">Privacy</Link>

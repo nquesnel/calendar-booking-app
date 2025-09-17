@@ -169,7 +169,7 @@ export default function CreateBooking() {
         <div className="container-width py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-semibold">CalendarSync</span>
+            <span className="text-xl font-semibold">Syncthesis</span>
           </Link>
           <Link href="/" className="flex items-center text-slate-600 hover:text-slate-900">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -220,7 +220,7 @@ export default function CreateBooking() {
                         <Zap className="h-8 w-8 text-blue-600" />
                       </div>
                     </div>
-                    <h3 className="text-lg font-semibold mb-2 text-blue-800">🚀 CalendarSync Advantage</h3>
+                    <h3 className="text-lg font-semibold mb-2 text-blue-800">🚀 Syncthesis Advantage</h3>
                     <p className="text-blue-700 text-sm mb-4">
                       Connect your calendar first so we can auto-fill your details and prepare for 
                       intelligent mutual scheduling with your meeting partner.
@@ -518,7 +518,7 @@ export default function CreateBooking() {
                   <div className="bg-blue-50 rounded-lg p-4">
                     <h3 className="font-semibold mb-2 flex items-center text-blue-800">
                       <Zap className="h-5 w-5 text-blue-600 mr-2" />
-                      🚀 CalendarSync Magic
+                      🚀 Syncthesis Magic
                     </h3>
                     <ol className="space-y-2 text-sm text-blue-800">
                       <li>1. <strong>Send this link</strong> to your meeting partner</li>

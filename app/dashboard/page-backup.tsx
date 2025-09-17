@@ -117,7 +117,7 @@ export default function Dashboard() {
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2">
               <Calendar className="h-6 w-6 text-primary" />
-              <span className="text-xl font-semibold">CalendarSync</span>
+              <span className="text-xl font-semibold">Syncthesis</span>
             </Link>
             <span className="text-secondary">|</span>
             <span className="font-medium">Dashboard</span>

@@ -309,7 +309,7 @@ export default function EnhancedCreateBooking() {
         <div className="container-width py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-blue-600" />
-            <span className="text-xl font-semibold">CalendarSync</span>
+            <span className="text-xl font-semibold">Syncthesis</span>
           </Link>
           <div className="flex items-center space-x-3">
             {isLoggedIn && (
@@ -1152,9 +1152,9 @@ export default function EnhancedCreateBooking() {
                 </p>
               </div>
 
-              {/* The CalendarSync Magic */}
+              {/* The Syncthesis Magic */}
               <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-6">The CalendarSync Magic</h3>
+                <h3 className="text-xl font-semibold mb-6">The Syncthesis Magic</h3>
                 <div className="space-y-4 text-left">
                   <div className="flex items-start space-x-4">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mt-1">
