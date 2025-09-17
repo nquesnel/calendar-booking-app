@@ -917,6 +917,7 @@ export default function StreamlinedCreatePage() {
                           )}
                         </div>
                       </div>
+                      </div>
                     </div>
                   </div>
                 </div>
