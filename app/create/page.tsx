@@ -700,7 +700,8 @@ export default function StreamlinedCreatePage() {
                       </p>
                     
                     {/* CALENDAR CONNECTION BUTTONS SECTION */}
-                    <div className="text-center space-y-8 py-8 border-b border-white border-opacity-20">
+                    <div className="text-center py-8 border-b border-white border-opacity-20">
+                      <div className="flex flex-col md:flex-row items-center justify-center gap-6">
                         <div className="relative inline-block">
                           {/* Most Popular Pill - Properly Positioned */}
                           <div className="absolute -top-3 -right-6 z-20">
@@ -798,7 +799,6 @@ export default function StreamlinedCreatePage() {
                           </button>
                         </div>
                       </div>
-
                     </div>
 
                     {/* BOTTOM SECTION: 75/25 SPLIT */}
