@@ -38,7 +38,7 @@ export async function DELETE(req: NextRequest) {
       where: { email: DEMO_USER_EMAIL }
     })
     
-    // 4. Delete user preferences
+    // 4. Delete user preferences (fixed: userPreference singular)
     await prisma.userPreference.deleteMany({
       where: { userId: user.id }
     })
