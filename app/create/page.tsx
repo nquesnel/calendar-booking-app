@@ -224,7 +224,7 @@ export default function CleanCreatePage() {
         </div>
       </nav>
 
-      {loading && step === 2 ? (
+      {loading ? (
         /* Processing OAuth Callback */
         <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-600 to-blue-700 flex items-center justify-center">
           <div className="text-center text-white">
