@@ -16,6 +16,7 @@ import {
 interface FormData {
   inviteeEmail: string
   inviteeName: string
+  inviteeEmails: string[]  // Multi-invitee support
   meetingTitle: string
   duration: number
   meetingType: string
@@ -37,6 +38,7 @@ export default function CleanCreatePage() {
   const [formData, setFormData] = useState<FormData>({
     inviteeEmail: '',
     inviteeName: '',
+    inviteeEmails: [],
     meetingTitle: '',
     duration: 30,
     meetingType: 'video',
@@ -94,34 +96,49 @@ export default function CleanCreatePage() {
 
   const handleStepOne = (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!formData.inviteeEmail || !formData.meetingTitle) {
-      alert('Please fill in both email address and meeting title.')
+
+    // Check if we have at least one invitee (either in the current field or in the list)
+    const hasInvitees = formData.inviteeEmail || formData.inviteeEmails.length > 0
+
+    if (!hasInvitees || !formData.meetingTitle) {
+      alert('Please fill in at least one email address and meeting title.')
       return
     }
-    
+
+    // Combine current email (if any) with the list of emails
+    const allInviteeEmails = [...formData.inviteeEmails]
+    if (formData.inviteeEmail && !allInviteeEmails.includes(formData.inviteeEmail)) {
+      allInviteeEmails.push(formData.inviteeEmail)
+    }
+
     // Store in session with 24hr expiration
     const meetingData = {
       ...formData,
+      inviteeEmails: allInviteeEmails,
       createdAt: Date.now(),
       expiresAt: Date.now() + (24 * 60 * 60 * 1000)
     }
-    
+
     sessionStorage.setItem('pendingMeeting', JSON.stringify(meetingData))
     setStep(2)
   }
 
   const createMeeting = async (meetingData: any) => {
     setLoading(true)
-    
+
     try {
       // Get authenticated user
       const profileResponse = await fetch('/api/profile')
       const profileData = await profileResponse.json()
-      
+
       if (!profileData.profile) {
         throw new Error('User not authenticated')
       }
+
+      // Use inviteeEmails if available, otherwise fall back to single email
+      const allInvitees = meetingData.inviteeEmails && meetingData.inviteeEmails.length > 0
+        ? meetingData.inviteeEmails
+        : [meetingData.inviteeEmail].filter(Boolean)
 
       // Create meeting
       const response = await fetch('/api/bookings/create', {
@@ -137,7 +154,8 @@ export default function CleanCreatePage() {
           phoneNumber: meetingData.phoneNumber,
           address: meetingData.address,
           meetingNotes: meetingData.meetingNotes,
-          inviteeEmail: meetingData.inviteeEmail,
+          inviteeEmail: allInvitees[0], // Primary invitee
+          inviteeEmails: allInvitees, // All invitees (for multi-invite support)
           inviteeName: meetingData.inviteeName,
           personalMessage: meetingData.personalMessage,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -146,31 +164,32 @@ export default function CleanCreatePage() {
 
       if (response.ok) {
         const data = await response.json()
-        
-        // Send email invite
-        if (meetingData.inviteeEmail && data.shareLink) {
+
+        // Send email invites to all invitees
+        if (allInvitees.length > 0 && data.shareLink) {
           try {
-            const inviteResponse = await fetch('/api/bookings/send-invite', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                shareLink: data.shareLink,
-                recipientEmail: meetingData.inviteeEmail,
-                recipientName: meetingData.inviteeName,
-                message: meetingData.personalMessage,
-                creatorName: profileData.profile.name,
-                meetingTitle: meetingData.meetingTitle
+            const invitePromises = allInvitees.map(email =>
+              fetch('/api/bookings/send-invite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  shareLink: data.shareLink,
+                  recipientEmail: email,
+                  recipientName: email === meetingData.inviteeEmail ? meetingData.inviteeName : email.split('@')[0],
+                  message: meetingData.personalMessage,
+                  creatorName: profileData.profile.name,
+                  meetingTitle: meetingData.meetingTitle
+                })
               })
-            })
-            
-            if (inviteResponse.ok) {
-              console.log('📧 Email invite sent successfully')
-            }
+            )
+
+            await Promise.all(invitePromises)
+            console.log(`📧 Email invites sent to ${allInvitees.length} recipient(s)`)
           } catch (error) {
-            console.error('Error sending invite:', error)
+            console.error('Error sending invites:', error)
           }
         }
-        
+
         setShareLink(data.shareLink)
         setShowSuccess(true)
       } else {
@@ -202,6 +221,7 @@ export default function CleanCreatePage() {
     setFormData({
       inviteeEmail: '',
       inviteeName: '',
+      inviteeEmails: [],
       meetingTitle: '',
       duration: 30,
       meetingType: 'video',
@@ -261,10 +281,10 @@ export default function CleanCreatePage() {
               <form onSubmit={handleStepOne} className="space-y-6">
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
                   <div className="space-y-6">
-                    {/* Email */}
+                    {/* Email - Single or Multiple */}
                     <div>
                       <label className="block text-base font-semibold text-slate-900 mb-2">
-                        Invitee Email Address *
+                        Invitee Email Address{formData.inviteeEmails.length > 0 ? 'es' : ''} *
                       </label>
                       <input
                         type="email"
@@ -272,6 +292,19 @@ export default function CleanCreatePage() {
                         placeholder="colleague@company.com"
                         value={formData.inviteeEmail}
                         onChange={(e) => setFormData({ ...formData, inviteeEmail: e.target.value })}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && formData.inviteeEmail) {
+                            e.preventDefault()
+                            // Add email to list
+                            if (!formData.inviteeEmails.includes(formData.inviteeEmail)) {
+                              setFormData({
+                                ...formData,
+                                inviteeEmails: [...formData.inviteeEmails, formData.inviteeEmail],
+                                inviteeEmail: ''
+                              })
+                            }
+                          }
+                        }}
                         className="w-full p-3 text-base border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         autoFocus
                       />
@@ -283,6 +316,46 @@ export default function CleanCreatePage() {
                           onChange={(e) => setFormData({ ...formData, inviteeName: e.target.value })}
                           className="w-full mt-2 p-2 text-sm border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-400"
                         />
+                      )}
+
+                      {/* Show additional invitees */}
+                      {formData.inviteeEmails.length > 0 && (
+                        <div className="mt-3 space-y-2">
+                          <div className="text-sm font-medium text-slate-600">
+                            Additional invitees ({formData.inviteeEmails.length}):
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {formData.inviteeEmails.map((email, idx) => (
+                              <div
+                                key={idx}
+                                className="inline-flex items-center space-x-2 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1 rounded-full text-sm"
+                              >
+                                <span>{email}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData({
+                                      ...formData,
+                                      inviteeEmails: formData.inviteeEmails.filter((_, i) => i !== idx)
+                                    })
+                                  }}
+                                  className="text-blue-500 hover:text-blue-700"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-xs text-slate-500">
+                            Press Enter to add another invitee, or continue to send to everyone
+                          </p>
+                        </div>
+                      )}
+
+                      {formData.inviteeEmails.length === 0 && (
+                        <p className="mt-2 text-xs text-slate-500">
+                          Tip: Press Enter to add multiple invitees for group meetings
+                        </p>
                       )}
                     </div>
 
@@ -535,7 +608,11 @@ export default function CleanCreatePage() {
                   <div className="space-y-4 text-white">
                     <div className="flex justify-between py-2 border-b border-white border-opacity-20">
                       <strong>To:</strong>
-                      <span>{formData.inviteeEmail}</span>
+                      <span>
+                        {formData.inviteeEmails.length > 0
+                          ? `${formData.inviteeEmails.length + (formData.inviteeEmail ? 1 : 0)} invitees`
+                          : formData.inviteeEmail || 'Not specified'}
+                      </span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-white border-opacity-20">
                       <strong>Title:</strong>

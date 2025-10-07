@@ -14,10 +14,20 @@ export async function GET(req: NextRequest) {
       )
     }
     
-    // Get user's bookings where they are the creator
+    // Get user's bookings where they are either the creator OR a recipient/participant
     const bookings = await prisma.booking.findMany({
       where: {
-        creatorEmail: sessionUser.email
+        OR: [
+          { creatorEmail: sessionUser.email },
+          { recipientEmail: sessionUser.email },
+          {
+            participants: {
+              some: {
+                email: sessionUser.email
+              }
+            }
+          }
+        ]
       },
       include: {
         participants: true,
