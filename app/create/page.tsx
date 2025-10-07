@@ -3,20 +3,27 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { 
-  Calendar, 
-  Video, 
-  Phone, 
-  MapPin, 
-  Settings, 
+import {
+  Calendar,
+  Video,
+  Phone,
+  MapPin,
+  Settings,
   Copy,
-  CheckCircle
+  CheckCircle,
+  X,
+  Plus,
+  Crown
 } from 'lucide-react'
+import { getTierFeatures, PlanTier, TIER_PRICING } from '@/lib/tiers'
+
+interface Invitee {
+  email: string
+  name?: string
+}
 
 interface FormData {
-  inviteeEmail: string
-  inviteeName: string
-  inviteeEmails: string[]  // Multi-invitee support
+  invitees: Invitee[]
   meetingTitle: string
   duration: number
   meetingType: string
@@ -34,11 +41,10 @@ export default function CleanCreatePage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [shareLink, setShareLink] = useState('')
   const [copied, setCopied] = useState(false)
-  
+  const [userTier, setUserTier] = useState<PlanTier>('free')
+
   const [formData, setFormData] = useState<FormData>({
-    inviteeEmail: '',
-    inviteeName: '',
-    inviteeEmails: [],
+    invitees: [{ email: '', name: '' }],
     meetingTitle: '',
     duration: 30,
     meetingType: 'video',
@@ -48,6 +54,22 @@ export default function CleanCreatePage() {
     meetingNotes: '',
     personalMessage: ''
   })
+
+  // Get user's tier on mount
+  useEffect(() => {
+    const fetchUserTier = async () => {
+      try {
+        const response = await fetch('/api/profile')
+        const data = await response.json()
+        if (data.profile?.tier) {
+          setUserTier(data.profile.tier)
+        }
+      } catch (error) {
+        console.error('Error fetching user tier:', error)
+      }
+    }
+    fetchUserTier()
+  }, [])
 
   // Check for OAuth callback
   useEffect(() => {
@@ -94,27 +116,48 @@ export default function CleanCreatePage() {
     }
   }
 
+  const tierFeatures = getTierFeatures(userTier)
+  const maxInvitees = tierFeatures.maxGroupParticipants - 1 // -1 because organizer counts
+
+  const addInviteeField = () => {
+    if (formData.invitees.length >= maxInvitees) {
+      return // At tier limit
+    }
+    setFormData({
+      ...formData,
+      invitees: [...formData.invitees, { email: '', name: '' }]
+    })
+  }
+
+  const removeInviteeField = (index: number) => {
+    if (formData.invitees.length === 1) return // Keep at least one field
+    setFormData({
+      ...formData,
+      invitees: formData.invitees.filter((_, i) => i !== index)
+    })
+  }
+
+  const updateInvitee = (index: number, field: 'email' | 'name', value: string) => {
+    const newInvitees = [...formData.invitees]
+    newInvitees[index] = { ...newInvitees[index], [field]: value }
+    setFormData({ ...formData, invitees: newInvitees })
+  }
+
   const handleStepOne = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Check if we have at least one invitee (either in the current field or in the list)
-    const hasInvitees = formData.inviteeEmail || formData.inviteeEmails.length > 0
+    // Filter out empty invitees
+    const validInvitees = formData.invitees.filter(inv => inv.email.trim() !== '')
 
-    if (!hasInvitees || !formData.meetingTitle) {
+    if (validInvitees.length === 0 || !formData.meetingTitle) {
       alert('Please fill in at least one email address and meeting title.')
       return
-    }
-
-    // Combine current email (if any) with the list of emails
-    const allInviteeEmails = [...formData.inviteeEmails]
-    if (formData.inviteeEmail && !allInviteeEmails.includes(formData.inviteeEmail)) {
-      allInviteeEmails.push(formData.inviteeEmail)
     }
 
     // Store in session with 24hr expiration
     const meetingData = {
       ...formData,
-      inviteeEmails: allInviteeEmails,
+      invitees: validInvitees,
       createdAt: Date.now(),
       expiresAt: Date.now() + (24 * 60 * 60 * 1000)
     }
@@ -135,10 +178,8 @@ export default function CleanCreatePage() {
         throw new Error('User not authenticated')
       }
 
-      // Use inviteeEmails if available, otherwise fall back to single email
-      const allInvitees = meetingData.inviteeEmails && meetingData.inviteeEmails.length > 0
-        ? meetingData.inviteeEmails
-        : [meetingData.inviteeEmail].filter(Boolean)
+      const invitees = meetingData.invitees || []
+      const inviteeEmails = invitees.map((inv: Invitee) => inv.email)
 
       // Create meeting
       const response = await fetch('/api/bookings/create', {
@@ -154,11 +195,12 @@ export default function CleanCreatePage() {
           phoneNumber: meetingData.phoneNumber,
           address: meetingData.address,
           meetingNotes: meetingData.meetingNotes,
-          inviteeEmail: allInvitees[0], // Primary invitee
-          inviteeEmails: allInvitees, // All invitees (for multi-invite support)
-          inviteeName: meetingData.inviteeName,
+          inviteeEmail: inviteeEmails[0], // Primary invitee
+          inviteeEmails: inviteeEmails, // All invitees
+          inviteeName: invitees[0]?.name || inviteeEmails[0]?.split('@')[0],
           personalMessage: meetingData.personalMessage,
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          isGroupMeeting: invitees.length > 1 // Mark as group if multiple invitees
         })
       })
 
@@ -166,16 +208,16 @@ export default function CleanCreatePage() {
         const data = await response.json()
 
         // Send email invites to all invitees
-        if (allInvitees.length > 0 && data.shareLink) {
+        if (invitees.length > 0 && data.shareLink) {
           try {
-            const invitePromises = allInvitees.map(email =>
+            const invitePromises = invitees.map((invitee: Invitee) =>
               fetch('/api/bookings/send-invite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   shareLink: data.shareLink,
-                  recipientEmail: email,
-                  recipientName: email === meetingData.inviteeEmail ? meetingData.inviteeName : email.split('@')[0],
+                  recipientEmail: invitee.email,
+                  recipientName: invitee.name || invitee.email.split('@')[0],
                   message: meetingData.personalMessage,
                   creatorName: profileData.profile.name,
                   meetingTitle: meetingData.meetingTitle
@@ -184,7 +226,7 @@ export default function CleanCreatePage() {
             )
 
             await Promise.all(invitePromises)
-            console.log(`📧 Email invites sent to ${allInvitees.length} recipient(s)`)
+            console.log(`📧 Email invites sent to ${invitees.length} recipient(s)`)
           } catch (error) {
             console.error('Error sending invites:', error)
           }
@@ -219,9 +261,7 @@ export default function CleanCreatePage() {
     setCopied(false)
     setStep(1)
     setFormData({
-      inviteeEmail: '',
-      inviteeName: '',
-      inviteeEmails: [],
+      invitees: [{ email: '', name: '' }],
       meetingTitle: '',
       duration: 30,
       meetingType: 'video',
@@ -281,80 +321,86 @@ export default function CleanCreatePage() {
               <form onSubmit={handleStepOne} className="space-y-6">
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
                   <div className="space-y-6">
-                    {/* Email - Single or Multiple */}
+                    {/* Invitee Email Addresses */}
                     <div>
-                      <label className="block text-base font-semibold text-slate-900 mb-2">
-                        Invitee Email Address{formData.inviteeEmails.length > 0 ? 'es' : ''} *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="colleague@company.com"
-                        value={formData.inviteeEmail}
-                        onChange={(e) => setFormData({ ...formData, inviteeEmail: e.target.value })}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && formData.inviteeEmail) {
-                            e.preventDefault()
-                            // Add email to list
-                            if (!formData.inviteeEmails.includes(formData.inviteeEmail)) {
-                              setFormData({
-                                ...formData,
-                                inviteeEmails: [...formData.inviteeEmails, formData.inviteeEmail],
-                                inviteeEmail: ''
-                              })
-                            }
-                          }
-                        }}
-                        className="w-full p-3 text-base border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        autoFocus
-                      />
-                      {formData.inviteeEmail && (
-                        <input
-                          type="text"
-                          placeholder="Their name (optional)"
-                          value={formData.inviteeName}
-                          onChange={(e) => setFormData({ ...formData, inviteeName: e.target.value })}
-                          className="w-full mt-2 p-2 text-sm border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-400"
-                        />
-                      )}
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="block text-base font-semibold text-slate-900">
+                          Invitee Email Address{formData.invitees.length > 1 ? 'es' : ''} *
+                        </label>
+                        {formData.invitees.length > 1 && (
+                          <span className="text-xs text-slate-500">
+                            {formData.invitees.length} of {maxInvitees} max
+                          </span>
+                        )}
+                      </div>
 
-                      {/* Show additional invitees */}
-                      {formData.inviteeEmails.length > 0 && (
-                        <div className="mt-3 space-y-2">
-                          <div className="text-sm font-medium text-slate-600">
-                            Additional invitees ({formData.inviteeEmails.length}):
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {formData.inviteeEmails.map((email, idx) => (
-                              <div
-                                key={idx}
-                                className="inline-flex items-center space-x-2 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1 rounded-full text-sm"
-                              >
-                                <span>{email}</span>
+                      <div className="space-y-3">
+                        {formData.invitees.map((invitee, index) => (
+                          <div key={index} className="relative">
+                            <div className="flex gap-2">
+                              <input
+                                type="email"
+                                required
+                                placeholder="john@company.com"
+                                value={invitee.email}
+                                onChange={(e) => updateInvitee(index, 'email', e.target.value)}
+                                className="flex-1 p-3 text-base border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                autoFocus={index === 0}
+                              />
+                              {formData.invitees.length > 1 && (
                                 <button
                                   type="button"
-                                  onClick={() => {
-                                    setFormData({
-                                      ...formData,
-                                      inviteeEmails: formData.inviteeEmails.filter((_, i) => i !== idx)
-                                    })
-                                  }}
-                                  className="text-blue-500 hover:text-blue-700"
+                                  onClick={() => removeInviteeField(index)}
+                                  className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                  title="Remove invitee"
                                 >
-                                  ×
+                                  <X className="h-5 w-5" />
                                 </button>
-                              </div>
-                            ))}
+                              )}
+                            </div>
+                            {invitee.email && (
+                              <input
+                                type="text"
+                                placeholder="Their name (optional)"
+                                value={invitee.name}
+                                onChange={(e) => updateInvitee(index, 'name', e.target.value)}
+                                className="w-full mt-2 p-2 text-sm border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-400"
+                              />
+                            )}
                           </div>
-                          <p className="text-xs text-slate-500">
-                            Press Enter to add another invitee, or continue to send to everyone
-                          </p>
+                        ))}
+                      </div>
+
+                      {/* Add Another Invitee Button */}
+                      {formData.invitees.length < maxInvitees ? (
+                        <button
+                          type="button"
+                          onClick={addInviteeField}
+                          className="mt-3 w-full p-3 border-2 border-dashed border-slate-300 rounded-lg text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 font-medium"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Add Another Invitee
+                        </button>
+                      ) : (
+                        <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                          <Crown className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                          <div className="text-sm">
+                            <div className="font-medium text-amber-900">
+                              {userTier === 'super_admin' ? 'Maximum invitees reached' : `${userTier.charAt(0).toUpperCase() + userTier.slice(1)} Tier Limit Reached`}
+                            </div>
+                            {userTier !== 'super_admin' && userTier !== 'coaching' && (
+                              <div className="text-amber-700 mt-1">
+                                Upgrade to {userTier === 'free' || userTier === 'professional' ? 'Business' : 'Coaching'} tier to invite up to {userTier === 'free' || userTier === 'professional' ? '4' : '9'} people.
+                                {userTier === 'free' || userTier === 'professional' ? ` Only $${TIER_PRICING.business}/mo` : ` Only $${TIER_PRICING.coaching}/mo`}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
 
-                      {formData.inviteeEmails.length === 0 && (
+                      {formData.invitees.length === 1 && (
                         <p className="mt-2 text-xs text-slate-500">
-                          Tip: Press Enter to add multiple invitees for group meetings
+                          Click "Add Another Invitee" to create a group meeting
                         </p>
                       )}
                     </div>
@@ -492,13 +538,13 @@ export default function CleanCreatePage() {
 
                 <div className="text-center">
                   <p className="text-sm font-medium">
-                    {!formData.inviteeEmail || !formData.meetingTitle ? (
-                      <span className="text-slate-500">Email and title required</span>
-                    ) : (
+                    {formData.invitees.some(inv => inv.email) && formData.meetingTitle ? (
                       <span className="text-green-600 flex items-center justify-center space-x-1">
                         <CheckCircle className="h-4 w-4" />
                         <span>Ready to continue!</span>
                       </span>
+                    ) : (
+                      <span className="text-slate-500">Email and title required</span>
                     )}
                   </p>
                 </div>
@@ -606,13 +652,15 @@ export default function CleanCreatePage() {
                 <div className="bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl p-8 border border-white border-opacity-30 shadow-2xl">
                   <h3 className="text-2xl font-bold text-white mb-6 text-center">Meeting Preview</h3>
                   <div className="space-y-4 text-white">
-                    <div className="flex justify-between py-2 border-b border-white border-opacity-20">
+                    <div className="py-2 border-b border-white border-opacity-20">
                       <strong>To:</strong>
-                      <span>
-                        {formData.inviteeEmails.length > 0
-                          ? `${formData.inviteeEmails.length + (formData.inviteeEmail ? 1 : 0)} invitees`
-                          : formData.inviteeEmail || 'Not specified'}
-                      </span>
+                      <div className="mt-2 space-y-1">
+                        {formData.invitees.filter(inv => inv.email).map((invitee, idx) => (
+                          <div key={idx} className="text-sm">
+                            {invitee.email} {invitee.name && `(${invitee.name})`}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <div className="flex justify-between py-2 border-b border-white border-opacity-20">
                       <strong>Title:</strong>
