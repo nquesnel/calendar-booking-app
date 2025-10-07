@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npm run schema:prod && prisma generate && prisma db push && next build",
+    "build": "npm run schema:prod && prisma generate && next build",
     "build:dev": "npm run schema:dev && prisma generate && next build",
     "schema:prod": "cp prisma/schema-postgresql.prisma prisma/schema.prisma",
     "schema:dev": "cp prisma/schema-sqlite.prisma prisma/schema.prisma",
