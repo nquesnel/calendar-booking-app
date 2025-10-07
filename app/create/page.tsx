@@ -61,8 +61,8 @@ export default function CleanCreatePage() {
       try {
         const response = await fetch('/api/profile')
         const data = await response.json()
-        if (data.profile?.tier) {
-          setUserTier(data.profile.tier)
+        if (data.profile?.plan) {
+          setUserTier(data.profile.plan as PlanTier)
         }
       } catch (error) {
         console.error('Error fetching user tier:', error)
