@@ -26,5 +26,15 @@ export function createPrismaClient() {
   }
 }
 
-// Legacy export for backwards compatibility - but use createPrismaClient() in new code
-export const prisma = createPrismaClient()
+// Legacy export with lazy initialization (safe for serverless)
+// This ensures Prisma client is only created when actually used, not at import time
+let _prismaInstance: PrismaClient | undefined
+
+export const prisma = new Proxy({} as PrismaClient, {
+  get(target, prop) {
+    if (!_prismaInstance) {
+      _prismaInstance = createPrismaClient()
+    }
+    return (_prismaInstance as any)[prop]
+  }
+})
