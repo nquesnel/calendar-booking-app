@@ -119,9 +119,12 @@ export default function CleanCreatePage() {
   const tierFeatures = getTierFeatures(userTier)
   const maxInvitees = tierFeatures.maxGroupParticipants - 1 // -1 because organizer counts
 
+  const [showTierLimit, setShowTierLimit] = useState(false)
+
   const addInviteeField = () => {
     if (formData.invitees.length >= maxInvitees) {
-      return // At tier limit
+      setShowTierLimit(true) // Show tier limit message
+      return
     }
     setFormData({
       ...formData,
@@ -131,6 +134,7 @@ export default function CleanCreatePage() {
 
   const removeInviteeField = (index: number) => {
     if (formData.invitees.length === 1) return // Keep at least one field
+    setShowTierLimit(false) // Hide limit message when removing invitees
     setFormData({
       ...formData,
       invitees: formData.invitees.filter((_, i) => i !== index)
@@ -372,16 +376,17 @@ export default function CleanCreatePage() {
                       </div>
 
                       {/* Add Another Invitee Button */}
-                      {formData.invitees.length < maxInvitees ? (
-                        <button
-                          type="button"
-                          onClick={addInviteeField}
-                          className="mt-3 w-full p-3 border-2 border-dashed border-slate-300 rounded-lg text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 font-medium"
-                        >
-                          <Plus className="h-4 w-4" />
-                          Add Another Invitee
-                        </button>
-                      ) : (
+                      <button
+                        type="button"
+                        onClick={addInviteeField}
+                        className="mt-3 w-full p-3 border-2 border-dashed border-slate-300 rounded-lg text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 font-medium"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Add Another Invitee
+                      </button>
+
+                      {/* Tier Limit Message - Only shows after clicking button at limit */}
+                      {showTierLimit && (
                         <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
                           <Crown className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                           <div className="text-sm">
