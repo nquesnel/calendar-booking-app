@@ -389,15 +389,23 @@ export default function CleanCreatePage() {
                       {showTierLimit && (
                         <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
                           <Crown className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                          <div className="text-sm">
+                          <div className="text-sm flex-1">
                             <div className="font-medium text-amber-900">
                               {userTier === 'super_admin' ? 'Maximum invitees reached' : `${userTier.charAt(0).toUpperCase() + userTier.slice(1)} Tier Limit Reached`}
                             </div>
                             {userTier !== 'super_admin' && userTier !== 'coaching' && (
-                              <div className="text-amber-700 mt-1">
-                                Upgrade to {userTier === 'free' || userTier === 'professional' ? 'Business' : 'Coaching'} tier to invite up to {userTier === 'free' || userTier === 'professional' ? '4' : '9'} people.
-                                {userTier === 'free' || userTier === 'professional' ? ` Only $${TIER_PRICING.business}/mo` : ` Only $${TIER_PRICING.coaching}/mo`}
-                              </div>
+                              <>
+                                <div className="text-amber-700 mt-1">
+                                  Upgrade to {userTier === 'free' || userTier === 'professional' ? 'Business' : 'Coaching'} tier to invite up to {userTier === 'free' || userTier === 'professional' ? '4' : '9'} people.
+                                  {userTier === 'free' || userTier === 'professional' ? ` Only $${TIER_PRICING.business}/mo` : ` Only $${TIER_PRICING.coaching}/mo`}
+                                </div>
+                                <a
+                                  href="/pricing"
+                                  className="inline-block mt-2 text-blue-600 hover:text-blue-700 font-medium text-sm underline"
+                                >
+                                  View Pricing Plans →
+                                </a>
+                              </>
                             )}
                           </div>
                         </div>

@@ -1245,17 +1245,44 @@ export default function AccountManagement() {
                         )}
                       </div>
 
-                      {currentPlan !== 'coaching' && currentPlan !== 'super_admin' && (
-                        <div className="text-center pt-4">
-                          <Link 
-                            href="/upgrade" 
-                            className="btn-primary inline-flex items-center"
+                      <div className="flex flex-col gap-3 pt-4">
+                        {currentPlan !== 'free' && currentPlan !== 'super_admin' && (
+                          <button
+                            onClick={async () => {
+                              try {
+                                const response = await fetch('/api/stripe/create-portal-session', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ userId: profile?.id })
+                                })
+                                const data = await response.json()
+                                if (data.url) {
+                                  window.location.href = data.url
+                                } else {
+                                  alert('Unable to open billing portal')
+                                }
+                              } catch (error) {
+                                console.error('Error opening billing portal:', error)
+                                alert('Failed to open billing portal')
+                              }
+                            }}
+                            className="btn-secondary w-full flex items-center justify-center"
+                          >
+                            <Settings className="h-4 w-4 mr-2" />
+                            Manage Billing
+                          </button>
+                        )}
+
+                        {currentPlan !== 'coaching' && currentPlan !== 'super_admin' && (
+                          <Link
+                            href="/pricing"
+                            className="btn-primary w-full flex items-center justify-center"
                           >
                             <Crown className="h-4 w-4 mr-2" />
                             Upgrade Plan
                           </Link>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
