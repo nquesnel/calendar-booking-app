@@ -103,6 +103,9 @@ export default function LandingPage() {
             <span className="text-xl font-semibold">Syncthesis</span>
           </div>
           <div className="flex items-center space-x-3">
+            <Link href="/pricing" className="text-slate-600 hover:text-slate-900 hidden sm:block">
+              Pricing
+            </Link>
             {isLoggedIn ? (
               <>
                 <Link href="/dashboard" className="btn-secondary flex items-center whitespace-nowrap">
@@ -343,6 +346,7 @@ export default function LandingPage() {
               <span className="font-semibold">Syncthesis</span>
             </div>
             <div className="flex space-x-6 text-sm text-slate-600">
+              <Link href="/pricing" className="hover:text-slate-900">Pricing</Link>
               <Link href="/privacy" className="hover:text-slate-900">Privacy</Link>
               <Link href="/terms" className="hover:text-slate-900">Terms</Link>
               <Link href="/support" className="hover:text-slate-900">Support</Link>
