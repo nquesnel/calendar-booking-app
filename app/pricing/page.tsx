@@ -6,17 +6,6 @@ import Link from 'next/link'
 import { Check, Crown, Sparkles, Users, Zap, HelpCircle, Calendar } from 'lucide-react'
 import { TIER_PRICING, PlanTier } from '@/lib/tiers'
 
-export const metadata = {
-  title: 'Pricing - Syncthesis Calendar Scheduling Software | Plans Starting at $0',
-  description: 'Compare Syncthesis pricing plans for calendar scheduling and meeting coordination. Free forever plan available. Professional ($15/mo), Business ($35/mo), and Coaching ($65/mo) plans with advanced features. No credit card required to start.',
-  keywords: 'calendar scheduling pricing, meeting scheduler cost, appointment booking software price, calendar sync pricing, scheduling tool plans, free calendar scheduler, business meeting software pricing',
-  openGraph: {
-    title: 'Syncthesis Pricing - AI-Powered Calendar Scheduling Plans',
-    description: 'Choose the perfect plan for your scheduling needs. Start free forever or upgrade for unlimited meetings, team features, and automation.',
-    type: 'website',
-  }
-}
-
 interface PricingTier {
   name: string
   plan: PlanTier
@@ -146,6 +135,15 @@ export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   useEffect(() => {
+    // Set document title for SEO
+    document.title = 'Pricing - Syncthesis Calendar Scheduling Software | Plans Starting at $0'
+
+    // Set meta description
+    const metaDescription = document.querySelector('meta[name="description"]')
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Compare Syncthesis pricing plans for calendar scheduling and meeting coordination. Free forever plan available. Professional ($15/mo), Business ($35/mo), and Coaching ($65/mo) plans with advanced features. No credit card required to start.')
+    }
+
     fetchCurrentUser()
   }, [])
 
