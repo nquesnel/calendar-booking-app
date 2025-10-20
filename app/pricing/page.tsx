@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Check, Crown, Sparkles, Users, Zap, HelpCircle, Calendar } from 'lucide-react'
-import { TIER_PRICING, PlanTier } from '@/lib/tiers'
+import { TIER_PRICING, TIER_PRICING_ANNUAL, PlanTier } from '@/lib/tiers'
 
 interface PricingTier {
   name: string
@@ -108,7 +108,7 @@ const faqs = [
   },
   {
     question: 'Do you offer annual billing discounts?',
-    answer: 'Yes! Contact our sales team for annual billing options with discounted rates. Enterprise customers receive custom pricing based on their needs.'
+    answer: 'Yes! Save 20% with annual billing. Toggle between monthly and annual pricing above to see your savings. Professional: $144/year ($12/mo), Business: $336/year ($28/mo), Coaching: $624/year ($52/mo).'
   },
   {
     question: 'What happens when I reach my meeting limit?',
@@ -133,6 +133,7 @@ export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [isAnnual, setIsAnnual] = useState(false)
 
   useEffect(() => {
     // Set document title for SEO
@@ -177,7 +178,8 @@ export default function PricingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan,
-          userId: currentUser.id
+          userId: currentUser.id,
+          interval: isAnnual ? 'year' : 'month'
         })
       })
 
@@ -273,6 +275,26 @@ export default function PricingPage() {
           )}
         </header>
 
+        {/* Billing Toggle */}
+        <div className="max-w-7xl mx-auto px-6 pb-8">
+          <div className="flex justify-center items-center space-x-4">
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-slate-900' : 'text-slate-600'}`}>
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className="relative w-14 h-7 bg-slate-200 rounded-full border border-slate-300 transition-colors hover:bg-slate-300"
+              aria-label="Toggle billing period"
+            >
+              <div className={`absolute top-1 ${isAnnual ? 'right-1' : 'left-1'} w-5 h-5 bg-blue-600 rounded-full transition-all shadow-sm`} />
+            </button>
+            <span className={`text-sm font-medium ${isAnnual ? 'text-slate-900' : 'text-slate-600'}`}>
+              Annual
+              <span className="text-green-600 ml-2 text-sm font-bold">Save 20%</span>
+            </span>
+          </div>
+        </div>
+
         {/* Pricing Cards */}
         <section className="max-w-7xl mx-auto px-6 pb-16">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -318,14 +340,26 @@ export default function PricingPage() {
                   </p>
 
                   <div className="mb-6">
-                    <div className="flex items-baseline">
-                      <span className="text-4xl font-bold text-slate-900">
-                        ${tier.price}
-                      </span>
-                      <span className="text-slate-600 ml-2">/month</span>
-                    </div>
-                    {tier.price > 0 && (
-                      <p className="text-xs text-slate-500 mt-1">Billed monthly • Cancel anytime</p>
+                    {tier.price === 0 ? (
+                      <div className="flex items-baseline">
+                        <span className="text-4xl font-bold text-slate-900">$0</span>
+                        <span className="text-slate-600 ml-2">/month</span>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-baseline">
+                          <span className="text-4xl font-bold text-slate-900">
+                            ${isAnnual ? Math.round(TIER_PRICING_ANNUAL[tier.plan] / 12) : tier.price}
+                          </span>
+                          <span className="text-slate-600 ml-2">/month</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">
+                          {isAnnual
+                            ? `$${TIER_PRICING_ANNUAL[tier.plan]}/year • Save 20%`
+                            : 'Billed monthly • Cancel anytime'
+                          }
+                        </p>
+                      </>
                     )}
                   </div>
 

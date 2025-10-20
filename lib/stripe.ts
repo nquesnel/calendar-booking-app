@@ -23,7 +23,7 @@ export const STRIPE_CONFIG = {
   mode: 'payment' as const,
 }
 
-// Stripe Price IDs for subscription tiers
+// Stripe Price IDs for subscription tiers (monthly)
 // These will be set as environment variables
 export const STRIPE_PRICES: Record<Exclude<PlanTier, 'free' | 'super_admin'>, string> = {
   professional: process.env.STRIPE_PRICE_PROFESSIONAL || '',
@@ -31,10 +31,19 @@ export const STRIPE_PRICES: Record<Exclude<PlanTier, 'free' | 'super_admin'>, st
   coaching: process.env.STRIPE_PRICE_COACHING || '',
 }
 
+// Stripe Price IDs for annual billing
+export const STRIPE_PRICES_ANNUAL: Record<Exclude<PlanTier, 'free' | 'super_admin'>, string> = {
+  professional: process.env.STRIPE_PRICE_PROFESSIONAL_ANNUAL || '',
+  business: process.env.STRIPE_PRICE_BUSINESS_ANNUAL || '',
+  coaching: process.env.STRIPE_PRICE_COACHING_ANNUAL || '',
+}
+
 // Map Stripe price IDs back to plan tiers (for webhook processing)
+// Supports both monthly and annual price IDs
 export function getPlanFromPriceId(priceId: string): PlanTier | null {
   const priceMap: Record<string, PlanTier> = {}
 
+  // Monthly prices
   if (process.env.STRIPE_PRICE_PROFESSIONAL) {
     priceMap[process.env.STRIPE_PRICE_PROFESSIONAL] = 'professional'
   }
@@ -43,6 +52,17 @@ export function getPlanFromPriceId(priceId: string): PlanTier | null {
   }
   if (process.env.STRIPE_PRICE_COACHING) {
     priceMap[process.env.STRIPE_PRICE_COACHING] = 'coaching'
+  }
+
+  // Annual prices
+  if (process.env.STRIPE_PRICE_PROFESSIONAL_ANNUAL) {
+    priceMap[process.env.STRIPE_PRICE_PROFESSIONAL_ANNUAL] = 'professional'
+  }
+  if (process.env.STRIPE_PRICE_BUSINESS_ANNUAL) {
+    priceMap[process.env.STRIPE_PRICE_BUSINESS_ANNUAL] = 'business'
+  }
+  if (process.env.STRIPE_PRICE_COACHING_ANNUAL) {
+    priceMap[process.env.STRIPE_PRICE_COACHING_ANNUAL] = 'coaching'
   }
 
   return priceMap[priceId] || null

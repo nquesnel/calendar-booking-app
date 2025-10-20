@@ -144,6 +144,15 @@ export const TIER_PRICING = {
   super_admin: 0,
 }
 
+// Annual pricing (20% discount = ~$12, $28, $52 per month)
+export const TIER_PRICING_ANNUAL = {
+  free: 0,
+  professional: 144, // $15/mo * 12 * 0.8 = $144/year
+  business: 336, // $35/mo * 12 * 0.8 = $336/year
+  coaching: 624, // $65/mo * 12 * 0.8 = $624/year
+  super_admin: 0,
+}
+
 export function getTierFeatures(plan: PlanTier): TierFeatures {
   return TIER_FEATURES[plan] || TIER_FEATURES.free
 }

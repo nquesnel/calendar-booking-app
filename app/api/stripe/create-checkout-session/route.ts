@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe, STRIPE_PRICES, getOrCreateStripeCustomer } from '@/lib/stripe'
+import { stripe, STRIPE_PRICES, STRIPE_PRICES_ANNUAL, getOrCreateStripeCustomer } from '@/lib/stripe'
 import { prisma } from '@/lib/db'
 import { PlanTier } from '@/lib/tiers'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { plan, userId } = body
+    const { plan, userId, interval = 'month' } = body
 
     // Validate plan
     const validPlans: PlanTier[] = ['professional', 'business', 'coaching']
@@ -42,8 +42,9 @@ export async function POST(req: NextRequest) {
       user.name
     )
 
-    // Get price ID for selected plan
-    const priceId = STRIPE_PRICES[plan as Exclude<PlanTier, 'free' | 'super_admin'>]
+    // Get price ID for selected plan and billing interval
+    const priceMap = interval === 'year' ? STRIPE_PRICES_ANNUAL : STRIPE_PRICES
+    const priceId = priceMap[plan as Exclude<PlanTier, 'free' | 'super_admin'>]
 
     if (!priceId) {
       return NextResponse.json(
@@ -68,11 +69,13 @@ export async function POST(req: NextRequest) {
       metadata: {
         userId: user.id,
         plan: plan,
+        interval: interval,
       },
       subscription_data: {
         metadata: {
           userId: user.id,
           plan: plan,
+          interval: interval,
         },
       },
     })
