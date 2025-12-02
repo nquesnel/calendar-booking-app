@@ -157,6 +157,7 @@ model UserPreference {
   // Buffer preferences
   bufferMinutes         Int      @default(15)
   allowBackToBack       Boolean  @default(false)
+  blockLunchBreak       Boolean  @default(false) // Whether to block lunch hour from suggestions
   lunchBreakStart       String   @default("12:00")
   lunchBreakEnd         String   @default("13:00")
   
