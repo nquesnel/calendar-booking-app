@@ -40,7 +40,8 @@ export async function getSmartSuggestions(
   recipientBusySlots: Record<string, CalendarEvent[]>,
   duration: number = 30,
   organizerPrefs: OrganizerPreferences,
-  timezone: string = 'UTC'
+  timezone: string = 'UTC',
+  bufferMinutes: number = 15
 ): Promise<SmartTimeSlot[]> {
   
   console.log('🎯 Smart AI Scheduling with organizer preferences:', organizerPrefs)
@@ -61,9 +62,9 @@ export async function getSmartSuggestions(
   const potentialSlots = generatePotentialSlots(searchWindow, duration, organizerPrefs, timezone)
   console.log(`🎲 Generated ${potentialSlots.length} potential slots`)
   
-  // Filter available slots (no conflicts)
-  const availableSlots = filterAvailableSlots(potentialSlots, creatorBusySlots, recipientBusySlots)
-  console.log(`✅ ${availableSlots.length} slots available after filtering conflicts`)
+  // Filter available slots (no conflicts, respecting buffer time)
+  const availableSlots = filterAvailableSlots(potentialSlots, creatorBusySlots, recipientBusySlots, bufferMinutes)
+  console.log(`✅ ${availableSlots.length} slots available after filtering conflicts (with ${bufferMinutes}min buffer)`)
   
   // Score and rank slots with intelligent reasoning
   const scoredSlots = scoreSlots(
@@ -278,24 +279,52 @@ function generatePotentialSlots(
 function filterAvailableSlots(
   slots: SmartTimeSlot[],
   creatorBusySlots: CalendarEvent[],
-  recipientBusySlots: Record<string, CalendarEvent[]>
+  recipientBusySlots: Record<string, CalendarEvent[]>,
+  bufferMinutes: number = 15
 ): SmartTimeSlot[] {
+  const bufferMs = bufferMinutes * 60 * 1000 // Convert to milliseconds
+
   return slots.filter(slot => {
-    // Check creator availability
-    const creatorHasConflict = creatorBusySlots.some(event =>
-      slot.start < event.end && slot.end > event.start
-    )
-    
+    const slotStart = slot.start.getTime()
+    const slotEnd = slot.end.getTime()
+
+    // Check creator availability with buffer time
+    const creatorHasConflict = creatorBusySlots.some(event => {
+      const eventStart = event.start.getTime()
+      const eventEnd = event.end.getTime()
+
+      // Direct overlap check
+      if (slotStart < eventEnd && slotEnd > eventStart) return true
+
+      // Buffer check: slot needs buffer time before and after
+      // If meeting ends at 11am and buffer is 15min, next slot can't start before 11:15am
+      if (Math.abs(eventEnd - slotStart) < bufferMs) return true
+      // If slot ends and there's a meeting too soon after
+      if (Math.abs(slotEnd - eventStart) < bufferMs) return true
+
+      return false
+    })
+
     if (creatorHasConflict) return false
-    
-    // Check all recipients availability
+
+    // Check all recipients availability with buffer time
     for (const [email, busySlots] of Object.entries(recipientBusySlots)) {
-      const hasConflict = busySlots.some(event =>
-        slot.start < event.end && slot.end > event.start
-      )
+      const hasConflict = busySlots.some(event => {
+        const eventStart = event.start.getTime()
+        const eventEnd = event.end.getTime()
+
+        // Direct overlap check
+        if (slotStart < eventEnd && slotEnd > eventStart) return true
+
+        // Buffer check
+        if (Math.abs(eventEnd - slotStart) < bufferMs) return true
+        if (Math.abs(slotEnd - eventStart) < bufferMs) return true
+
+        return false
+      })
       if (hasConflict) return false
     }
-    
+
     return true
   })
 }

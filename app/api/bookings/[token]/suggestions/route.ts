@@ -266,6 +266,22 @@ export async function GET(
     const totalBusySlots = Object.values(participantCalendarData).flat().length
     console.log(`  Total busy slots across all participants: ${totalBusySlots}`)
 
+    // Fetch creator's user preferences for buffer time settings
+    let bufferMinutes = 15 // Default buffer
+    try {
+      const creatorUser = await prisma.user.findUnique({
+        where: { email: booking.creatorEmail },
+        include: { preferences: true }
+      })
+
+      if (creatorUser?.preferences?.bufferMinutes) {
+        bufferMinutes = creatorUser.preferences.bufferMinutes
+        console.log(`📅 Using creator's buffer preference: ${bufferMinutes} minutes`)
+      }
+    } catch (error) {
+      console.log('⚠️ Could not fetch user preferences, using default 15min buffer')
+    }
+
     // Prepare organizer preferences
     const organizerPrefs = {
       timeUrgency: (booking.timeUrgency || 'flexible') as 'urgent' | 'flexible',
@@ -314,7 +330,8 @@ export async function GET(
       recipientBusySlotsMap,
       booking.duration,
       organizerPrefs,
-      booking.timeZone
+      booking.timeZone,
+      bufferMinutes
     )
 
     console.log(`Generated ${suggestions.length} suggestions for mutual availability:`, suggestions)
