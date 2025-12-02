@@ -90,6 +90,7 @@ interface UserPreferences {
   avoidDays?: string
   bufferMinutes: number
   allowBackToBack: boolean
+  blockLunchBreak: boolean
   lunchBreakStart: string
   lunchBreakEnd: string
   preferredMeetingType: string
@@ -128,6 +129,7 @@ export default function Dashboard() {
     avoidDays: '',
     bufferMinutes: 15,
     allowBackToBack: false,
+    blockLunchBreak: false,
     lunchBreakStart: '12:00',
     lunchBreakEnd: '13:00',
     preferredMeetingType: 'video',
@@ -1383,31 +1385,46 @@ export default function Dashboard() {
                     {/* Lunch Break */}
                     <div>
                       <h4 className="font-medium text-slate-900 mb-3">Lunch Break</h4>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Lunch Start
-                          </label>
+                      <div className="space-y-3">
+                        <label className="flex items-center">
                           <input
-                            type="time"
-                            value={preferences.lunchBreakStart}
-                            onChange={(e) => setPreferences({ ...preferences, lunchBreakStart: e.target.value })}
+                            type="checkbox"
+                            checked={preferences.blockLunchBreak}
+                            onChange={(e) => setPreferences({ ...preferences, blockLunchBreak: e.target.checked })}
                             disabled={!canUsePreferences}
-                            className="w-full p-2 border border-slate-300 rounded-lg disabled:bg-slate-100"
+                            className="mr-2"
                           />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Lunch End
-                          </label>
-                          <input
-                            type="time"
-                            value={preferences.lunchBreakEnd}
-                            onChange={(e) => setPreferences({ ...preferences, lunchBreakEnd: e.target.value })}
-                            disabled={!canUsePreferences}
-                            className="w-full p-2 border border-slate-300 rounded-lg disabled:bg-slate-100"
-                          />
-                        </div>
+                          <span className="text-sm">Block lunch break from suggestions</span>
+                        </label>
+
+                        {preferences.blockLunchBreak && (
+                          <div className="grid grid-cols-2 gap-4 ml-6">
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Lunch Start
+                              </label>
+                              <input
+                                type="time"
+                                value={preferences.lunchBreakStart}
+                                onChange={(e) => setPreferences({ ...preferences, lunchBreakStart: e.target.value })}
+                                disabled={!canUsePreferences}
+                                className="w-full p-2 border border-slate-300 rounded-lg disabled:bg-slate-100"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Lunch End
+                              </label>
+                              <input
+                                type="time"
+                                value={preferences.lunchBreakEnd}
+                                onChange={(e) => setPreferences({ ...preferences, lunchBreakEnd: e.target.value })}
+                                disabled={!canUsePreferences}
+                                className="w-full p-2 border border-slate-300 rounded-lg disabled:bg-slate-100"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 

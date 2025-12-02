@@ -41,7 +41,10 @@ export async function getSmartSuggestions(
   duration: number = 30,
   organizerPrefs: OrganizerPreferences,
   timezone: string = 'UTC',
-  bufferMinutes: number = 15
+  bufferMinutes: number = 15,
+  blockLunchBreak: boolean = false,
+  lunchBreakStart: string = '12:00',
+  lunchBreakEnd: string = '13:00'
 ): Promise<SmartTimeSlot[]> {
   
   console.log('🎯 Smart AI Scheduling with organizer preferences:', organizerPrefs)
@@ -59,7 +62,7 @@ export async function getSmartSuggestions(
   console.log('⏰ Search window:', searchWindow)
   
   // Generate potential time slots
-  const potentialSlots = generatePotentialSlots(searchWindow, duration, organizerPrefs, timezone)
+  const potentialSlots = generatePotentialSlots(searchWindow, duration, organizerPrefs, timezone, blockLunchBreak, lunchBreakStart, lunchBreakEnd)
   console.log(`🎲 Generated ${potentialSlots.length} potential slots`)
   
   // Filter available slots (no conflicts, respecting buffer time)
@@ -171,7 +174,10 @@ function generatePotentialSlots(
   searchWindow: { start: Date, end: Date, maxDays: number },
   duration: number,
   prefs: OrganizerPreferences,
-  timezone: string = 'UTC'
+  timezone: string = 'UTC',
+  blockLunchBreak: boolean = false,
+  lunchBreakStart: string = '12:00',
+  lunchBreakEnd: string = '13:00'
 ): SmartTimeSlot[] {
   const slots: SmartTimeSlot[] = []
   
@@ -220,9 +226,26 @@ function generatePotentialSlots(
         // Skip if slot would go past end time (check in local timezone)
         const localSlotEnd = toZonedTime(slotEnd, timezone)
         if (localSlotEnd.getHours() >= timeSlot.end) continue
-        
-        // Skip lunch hour (12-1pm) in local timezone
-        if (hour >= 12 && hour < 13) continue
+
+        // Skip lunch hour if user has enabled lunch break blocking
+        if (blockLunchBreak) {
+          const lunchStartHour = parseInt(lunchBreakStart.split(':')[0])
+          const lunchStartMin = parseInt(lunchBreakStart.split(':')[1])
+          const lunchEndHour = parseInt(lunchBreakEnd.split(':')[0])
+          const lunchEndMin = parseInt(lunchBreakEnd.split(':')[1])
+
+          const slotStartHour = Math.floor(hour)
+          const slotStartMin = (hour % 1) * 60
+
+          // Check if slot starts during lunch break
+          const slotStartMinutes = slotStartHour * 60 + slotStartMin
+          const lunchStartMinutes = lunchStartHour * 60 + lunchStartMin
+          const lunchEndMinutes = lunchEndHour * 60 + lunchEndMin
+
+          if (slotStartMinutes >= lunchStartMinutes && slotStartMinutes < lunchEndMinutes) {
+            continue
+          }
+        }
         
         let contextLabel = ''
         let reasoning = ''

@@ -11,221 +11,222 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  name          String
-  firstName     String?
-  lastName      String?
-  username      String?   @unique // Personal booking link username
-  password      String?   // For email/password auth
-  plan          String    @default("free")
-  bookingCount  Int       @default(0)
-  resetDate     DateTime  @default(now())
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  firstName    String?
+  lastName     String?
+  username     String?  @unique // Personal booking link username
+  password     String? // For email/password auth
+  plan         String   @default("free")
+  bookingCount Int      @default(0)
+  resetDate    DateTime @default(now())
 
   // Stripe subscription fields
-  stripeCustomerId       String?   @unique
-  stripeSubscriptionId   String?   @unique
+  stripeCustomerId         String?   @unique
+  stripeSubscriptionId     String?   @unique
   stripeSubscriptionStatus String? // active, canceled, past_due, trialing, incomplete
-  subscriptionEndsAt     DateTime? // When current period ends
-  cancelAtPeriodEnd      Boolean   @default(false)
+  subscriptionEndsAt       DateTime? // When current period ends
+  cancelAtPeriodEnd        Boolean   @default(false)
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Profile meeting defaults
   defaultVideoLink    String?
   defaultPhoneNumber  String?
   defaultAddress      String?
   defaultMeetingNotes String?
-  
-  bookingsCreated   Booking[] @relation("BookingCreator")
-  bookingsReceived  Booking[] @relation("BookingRecipient")
-  calendarTokens    CalendarToken[]
-  preferences       UserPreference?
-  coachingPackages  CoachingPackage[]
-  sessions          UserSession[]
-  followUpSettings  UserFollowUpSettings?
+
+  bookingsCreated  Booking[]             @relation("BookingCreator")
+  bookingsReceived Booking[]             @relation("BookingRecipient")
+  calendarTokens   CalendarToken[]
+  preferences      UserPreference?
+  coachingPackages CoachingPackage[]
+  sessions         UserSession[]
+  followUpSettings UserFollowUpSettings?
 }
 
 model CalendarToken {
-  id            String    @id @default(uuid())
-  userId        String
-  provider      String
-  accessToken   String
-  refreshToken  String?
-  expiresAt     DateTime?
-  email         String
-  accountName   String?   // Display name for this specific account
-  isPrimary     Boolean   @default(false) // Which account is primary for this provider
-  isAccountCalendar Boolean @default(false) // TRUE = Account identity (login calendar), FALSE = Data source
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id                String    @id @default(uuid())
+  userId            String
+  provider          String
+  accessToken       String
+  refreshToken      String?
+  expiresAt         DateTime?
+  email             String
+  accountName       String? // Display name for this specific account
+  isPrimary         Boolean   @default(false) // Which account is primary for this provider
+  isAccountCalendar Boolean   @default(false) // TRUE = Account identity (login calendar), FALSE = Data source
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, provider, email]) // Allow multiple accounts per provider, but unique per email
   @@index([userId, provider])
 }
 
 model Booking {
-  id            String    @id @default(uuid())
-  creatorId     String?
-  recipientId   String?
-  creatorEmail  String
-  creatorName   String
+  id             String  @id @default(uuid())
+  creatorId      String?
+  recipientId    String?
+  creatorEmail   String
+  creatorName    String
   recipientEmail String?
-  recipientName String?
-  title         String
-  description   String?
-  duration      Int       @default(30)
-  status        String    @default("pending")
-  shareToken    String    @unique
-  
-  selectedTime  DateTime?
-  timeZone      String    @default("UTC")
-  
+  recipientName  String?
+  title          String
+  description    String?
+  duration       Int     @default(30)
+  status         String  @default("pending")
+  shareToken     String  @unique
+
+  selectedTime DateTime?
+  timeZone     String    @default("UTC")
+
   // Enhanced meeting location system
-  meetingType   String    @default("video") // video, phone, in-person, custom
-  meetingLink   String?   // Video call link
-  phoneNumber   String?   // Phone number or "I'll call you"
-  address       String?   // In-person address
-  meetingNotes  String?   // Custom instructions
-  
+  meetingType  String  @default("video") // video, phone, in-person, custom
+  meetingLink  String? // Video call link
+  phoneNumber  String? // Phone number or "I'll call you"
+  address      String? // In-person address
+  meetingNotes String? // Custom instructions
+
   // Group meeting support
-  isGroupMeeting    Boolean   @default(false)
-  maxParticipants   Int       @default(2)
-  
+  isGroupMeeting  Boolean @default(false)
+  maxParticipants Int     @default(2)
+
   // Group meeting deadline system
-  participantDeadline DateTime?  // When participants must connect by
-  autoSelectAtDeadline Boolean   @default(false) // Whether to auto-select time at deadline
-  deadlineHours     Int       @default(48) // Hours from creation to deadline
-  allParticipantsConnected Boolean @default(false) // Track when everyone is ready
-  readyForSelection DateTime? // When organizer can/should select time
-  
+  participantDeadline      DateTime? // When participants must connect by
+  autoSelectAtDeadline     Boolean   @default(false) // Whether to auto-select time at deadline
+  deadlineHours            Int       @default(48) // Hours from creation to deadline
+  allParticipantsConnected Boolean   @default(false) // Track when everyone is ready
+  readyForSelection        DateTime? // When organizer can/should select time
+
   // Recurring session support
-  isRecurring       Boolean   @default(false)
-  recurringPattern  String?   // weekly, biweekly, monthly
-  recurringEndDate  DateTime?
-  parentBookingId   String?   // For recurring session instances
-  
+  isRecurring      Boolean   @default(false)
+  recurringPattern String? // weekly, biweekly, monthly
+  recurringEndDate DateTime?
+  parentBookingId  String? // For recurring session instances
+
   // Organizer scheduling preferences (stored per booking)
-  timeUrgency       String?   @default("flexible") // urgent, flexible
-  roughTimeframe    String?   // this_week, next_week, no_preference
-  timeOfDayPref     String?   // morning, afternoon, no_preference
-  avoidDays         String?   // comma-separated day numbers to avoid
-  preferredDays     String?   // comma-separated day numbers preferred
-  
-  googleEventId     String?
-  outlookEventId    String?
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  creator         User?              @relation("BookingCreator", fields: [creatorId], references: [id])
-  recipient       User?              @relation("BookingRecipient", fields: [recipientId], references: [id])
-  suggestions     TimeSuggestion[]
-  participants    BookingParticipant[]
-  coachingSession CoachingSession?
+  timeUrgency    String? @default("flexible") // urgent, flexible
+  roughTimeframe String? // this_week, next_week, no_preference
+  timeOfDayPref  String? // morning, afternoon, no_preference
+  avoidDays      String? // comma-separated day numbers to avoid
+  preferredDays  String? // comma-separated day numbers preferred
+
+  googleEventId  String?
+  outlookEventId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  creator            User?                    @relation("BookingCreator", fields: [creatorId], references: [id])
+  recipient          User?                    @relation("BookingRecipient", fields: [recipientId], references: [id])
+  suggestions        TimeSuggestion[]
+  participants       BookingParticipant[]
+  coachingSession    CoachingSession?
   rescheduleRequests GroupRescheduleRequest[]
-  followUps         MeetingFollowUp[]
+  followUps          MeetingFollowUp[]
 }
 
 model TimeSuggestion {
-  id            String    @id @default(uuid())
-  bookingId     String
-  startTime     DateTime
-  endTime       DateTime
-  score         Float
-  selected      Boolean   @default(false)
-  
-  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
+  id        String   @id @default(uuid())
+  bookingId String
+  startTime DateTime
+  endTime   DateTime
+  score     Float
+  selected  Boolean  @default(false)
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
   @@index([bookingId])
 }
 
 // User Preferences for time/meeting preferences
 model UserPreference {
-  id                    String   @id @default(uuid())
-  userId                String   @unique
-  
+  id     String @id @default(uuid())
+  userId String @unique
+
   // Time preferences
-  earliestStartTime     String   @default("09:00") // 24hr format
-  latestEndTime         String   @default("17:00")
-  preferredDays         String   @default("1,2,3,4,5") // 1=Mon,2=Tue...7=Sun
-  avoidDays             String?  // Days to avoid
-  
+  earliestStartTime String  @default("09:00") // 24hr format
+  latestEndTime     String  @default("17:00")
+  preferredDays     String  @default("1,2,3,4,5") // 1=Mon,2=Tue...7=Sun
+  avoidDays         String? // Days to avoid
+
   // Buffer preferences
-  bufferMinutes         Int      @default(15)
-  allowBackToBack       Boolean  @default(false)
-  lunchBreakStart       String   @default("12:00")
-  lunchBreakEnd         String   @default("13:00")
-  
+  bufferMinutes   Int     @default(15)
+  allowBackToBack Boolean @default(false)
+  blockLunchBreak Boolean @default(false) // Whether to block lunch hour from suggestions
+  lunchBreakStart String  @default("12:00")
+  lunchBreakEnd   String  @default("13:00")
+
   // Scheduling restrictions
-  allowSameDayScheduling Boolean  @default(false)
-  minimumNoticeHours    Int      @default(24) // Minimum hours before meeting can be scheduled
-  
+  allowSameDayScheduling Boolean @default(false)
+  minimumNoticeHours     Int     @default(24) // Minimum hours before meeting can be scheduled
+
   // Meeting type preferences
-  preferredMeetingType  String   @default("video") // video, phone, in-person
-  
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  
-  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferredMeetingType String @default("video") // video, phone, in-person
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Group meeting participants
 model BookingParticipant {
-  id              String    @id @default(uuid())
-  bookingId       String
-  email           String
-  name            String
-  status          String    @default("pending") // pending, calendar_connected, confirmed, declined, missed_deadline
-  calendarConnected Boolean @default(false)
-  connectedAt     DateTime?
-  remindersSent   Int       @default(0) // Track reminder emails sent
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
-  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
+  id                String    @id @default(uuid())
+  bookingId         String
+  email             String
+  name              String
+  status            String    @default("pending") // pending, calendar_connected, confirmed, declined, missed_deadline
+  calendarConnected Boolean   @default(false)
+  connectedAt       DateTime?
+  remindersSent     Int       @default(0) // Track reminder emails sent
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
   @@unique([bookingId, email])
 }
 
 // Coaching packages for package management
 model CoachingPackage {
-  id                String           @id @default(uuid())
-  coachId           String
-  name              String
-  description       String?
-  totalSessions     Int
-  sessionDuration   Int              @default(60)
-  pricePerSession   Float?
-  totalPrice        Float?
-  isActive          Boolean          @default(true)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  
-  coach             User             @relation(fields: [coachId], references: [id], onDelete: Cascade)
-  coachingSessions  CoachingSession[]
+  id              String   @id @default(uuid())
+  coachId         String
+  name            String
+  description     String?
+  totalSessions   Int
+  sessionDuration Int      @default(60)
+  pricePerSession Float?
+  totalPrice      Float?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  coach            User              @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  coachingSessions CoachingSession[]
 }
 
 // Individual coaching sessions
 model CoachingSession {
-  id                String          @id @default(uuid())
-  bookingId         String          @unique
-  packageId         String?
-  sessionNumber     Int             @default(1)
-  totalSessions     Int?
-  status            String          @default("scheduled") // scheduled, completed, cancelled
-  sessionNotes      String?
-  intakeFormData    String?         // JSON string for intake form responses
-  paymentStatus     String          @default("pending") // pending, paid, failed
-  paymentId         String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  
-  booking           Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  package           CoachingPackage? @relation(fields: [packageId], references: [id])
+  id             String   @id @default(uuid())
+  bookingId      String   @unique
+  packageId      String?
+  sessionNumber  Int      @default(1)
+  totalSessions  Int?
+  status         String   @default("scheduled") // scheduled, completed, cancelled
+  sessionNotes   String?
+  intakeFormData String? // JSON string for intake form responses
+  paymentStatus  String   @default("pending") // pending, paid, failed
+  paymentId      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  booking Booking          @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  package CoachingPackage? @relation(fields: [packageId], references: [id])
 }
 
 // Group rescheduling requests
@@ -234,58 +235,58 @@ model GroupRescheduleRequest {
   originalBookingId String
   requesterId       String
   status            String   @default("pending") // pending, confirmed, cancelled
-  suggestedTimes    String   // JSON array of suggested times
-  participantVotes  String?  // JSON object of participant votes
+  suggestedTimes    String // JSON array of suggested times
+  participantVotes  String? // JSON object of participant votes
   autoConfirmAt     DateTime // 24-hour deadline
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  
-  originalBooking   Booking  @relation(fields: [originalBookingId], references: [id], onDelete: Cascade)
-  
+
+  originalBooking Booking @relation(fields: [originalBookingId], references: [id], onDelete: Cascade)
+
   @@index([originalBookingId])
 }
 
 model UserSession {
-  id            String    @id @default(uuid())
-  userId        String
-  sessionToken  String    @unique
-  ipAddress     String?
-  userAgent     String?
-  location      String?   // City, Country (from IP geolocation)
-  device        String?   // Parsed from user agent
-  browser       String?   // Parsed from user agent
-  loginMethod   String?   // google, microsoft, email
-  isActive      Boolean   @default(true)
-  expiresAt     DateTime
-  lastActivity  DateTime  @default(now())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id           String   @id @default(uuid())
+  userId       String
+  sessionToken String   @unique
+  ipAddress    String?
+  userAgent    String?
+  location     String? // City, Country (from IP geolocation)
+  device       String? // Parsed from user agent
+  browser      String? // Parsed from user agent
+  loginMethod  String? // google, microsoft, email
+  isActive     Boolean  @default(true)
+  expiresAt    DateTime
+  lastActivity DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([sessionToken])
 }
 
 // Follow-up tracking for meeting requests
 model MeetingFollowUp {
-  id                    String    @id @default(uuid())
-  bookingId             String
-  followUpNumber        Int       // 1, 2, 3 (max follow-ups)
-  scheduledSendTime     DateTime  // When this should be sent (business hours calculated)
-  actualSentTime        DateTime? // When this was actually sent
-  sentAt                DateTime? // Legacy field for compatibility
-  openedAt              DateTime? // Email open tracking
-  clickedAt             DateTime? // Link click tracking
-  emailType             String    // 'follow_up_1', 'follow_up_2', 'final_notice'
-  status                String    @default("scheduled") // scheduled, sent, opened, clicked, bounced, unsubscribed, cancelled
-  recipientEmail        String
-  businessHoursCalculated Boolean @default(true) // Whether business hours logic was used
-  organizerTimezone     String?   // Organizer's timezone when scheduled
-  createdAt             DateTime  @default(now())
-  
-  booking               Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
+  id                      String    @id @default(uuid())
+  bookingId               String
+  followUpNumber          Int // 1, 2, 3 (max follow-ups)
+  scheduledSendTime       DateTime // When this should be sent (business hours calculated)
+  actualSentTime          DateTime? // When this was actually sent
+  sentAt                  DateTime? // Legacy field for compatibility
+  openedAt                DateTime? // Email open tracking
+  clickedAt               DateTime? // Link click tracking
+  emailType               String // 'follow_up_1', 'follow_up_2', 'final_notice'
+  status                  String    @default("scheduled") // scheduled, sent, opened, clicked, bounced, unsubscribed, cancelled
+  recipientEmail          String
+  businessHoursCalculated Boolean   @default(true) // Whether business hours logic was used
+  organizerTimezone       String? // Organizer's timezone when scheduled
+  createdAt               DateTime  @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
   @@index([bookingId])
   @@index([recipientEmail])
   @@index([scheduledSendTime])
@@ -294,36 +295,36 @@ model MeetingFollowUp {
 
 // User follow-up preferences and settings
 model UserFollowUpSettings {
-  id                        String    @id @default(uuid())
-  userId                    String    @unique
-  enabledByDefault          Boolean   @default(true)  // Auto-enable follow-ups for new meetings
-  businessHoursOnly         Boolean   @default(true)  // Send only during business hours
-  businessHoursStart        Int       @default(9)     // Business hours start (24hr format)
-  businessHoursEnd          Int       @default(17)    // Business hours end (24hr format)
-  businessDays              String    @default("1,2,3,4,5") // Monday-Friday
-  timezone                  String?   // User's timezone (from calendar integration)
-  holidayCalendarEnabled    Boolean   @default(true)  // Pause during major holidays
-  firstFollowUpBusinessHours Int      @default(48)    // Business hours for first follow-up
-  secondFollowUpBusinessHours Int     @default(72)    // Business hours for second follow-up
-  maxFollowUps              Int       @default(2)     // Max number of follow-ups
-  customTemplate            String?   // Custom follow-up message template
-  respectUnsubscribes       Boolean   @default(true)  // Honor recipient unsubscribe requests
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
-  
-  user                      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                          String   @id @default(uuid())
+  userId                      String   @unique
+  enabledByDefault            Boolean  @default(true) // Auto-enable follow-ups for new meetings
+  businessHoursOnly           Boolean  @default(true) // Send only during business hours
+  businessHoursStart          Int      @default(9) // Business hours start (24hr format)
+  businessHoursEnd            Int      @default(17) // Business hours end (24hr format)
+  businessDays                String   @default("1,2,3,4,5") // Monday-Friday
+  timezone                    String? // User's timezone (from calendar integration)
+  holidayCalendarEnabled      Boolean  @default(true) // Pause during major holidays
+  firstFollowUpBusinessHours  Int      @default(48) // Business hours for first follow-up
+  secondFollowUpBusinessHours Int      @default(72) // Business hours for second follow-up
+  maxFollowUps                Int      @default(2) // Max number of follow-ups
+  customTemplate              String? // Custom follow-up message template
+  respectUnsubscribes         Boolean  @default(true) // Honor recipient unsubscribe requests
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Recipient unsubscribe preferences
 model RecipientUnsubscribe {
-  id                String    @id @default(uuid())
-  recipientEmail    String
-  organizerEmail    String    // Can unsubscribe from specific organizer
-  unsubscribeType   String    // 'organizer_specific', 'all_follow_ups'
-  unsubscribedAt    DateTime  @default(now())
-  ipAddress         String?
-  userAgent         String?
-  
+  id              String   @id @default(uuid())
+  recipientEmail  String
+  organizerEmail  String // Can unsubscribe from specific organizer
+  unsubscribeType String // 'organizer_specific', 'all_follow_ups'
+  unsubscribedAt  DateTime @default(now())
+  ipAddress       String?
+  userAgent       String?
+
   @@unique([recipientEmail, organizerEmail])
   @@index([recipientEmail])
   @@index([organizerEmail])
@@ -331,26 +332,26 @@ model RecipientUnsubscribe {
 
 // Holiday calendar for business hours calculations
 model FollowUpHoliday {
-  id                String    @id @default(uuid())
-  date              DateTime  // Holiday date
-  name              String    // Holiday name (e.g., "Christmas", "New Year's Day")
-  countryCode       String    @default("US") // Country/region code
-  enabledByDefault  Boolean   @default(true) // Whether this holiday is active by default
-  createdAt         DateTime  @default(now())
-  
+  id               String   @id @default(uuid())
+  date             DateTime // Holiday date
+  name             String // Holiday name (e.g., "Christmas", "New Year's Day")
+  countryCode      String   @default("US") // Country/region code
+  enabledByDefault Boolean  @default(true) // Whether this holiday is active by default
+  createdAt        DateTime @default(now())
+
   @@unique([date, countryCode])
   @@index([date])
   @@index([countryCode])
 }
 
 model Analytics {
-  id            String    @id @default(uuid())
-  event         String
-  userId        String?
-  bookingId     String?
-  metadata      String?
-  createdAt     DateTime  @default(now())
-  
+  id        String   @id @default(uuid())
+  event     String
+  userId    String?
+  bookingId String?
+  metadata  String?
+  createdAt DateTime @default(now())
+
   @@index([userId])
   @@index([event])
 }
